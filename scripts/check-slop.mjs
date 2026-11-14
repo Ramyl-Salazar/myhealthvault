@@ -2,6 +2,8 @@
 // Usage: node scripts/check-slop.mjs [path ...]   (defaults to src)
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';
+// TypeScript 7 ships no JS API, so the parser comes from the pinned 5.x alias in devDependencies.
+import ts from 'typescript-api';
 
 const BANNED_PHRASES = [
   'welcome back', 'seamless', 'seamlessly', 'empower', 'journey', 'unlock', 'AI-powered',
@@ -110,20 +112,16 @@ function checkSource(file, key, source) {
     }
 
     if (key.includes('/screens/') || key.includes('/ui/')) {
-      // Blank string contents so quotes and angle brackets inside them are ignored.
-      let jsx = code;
-      for (const s of strings) {
-        jsx = jsx.slice(0, s.start) + blank(source.slice(s.start, s.start + s.text.length + 2)) + jsx.slice(s.start + s.text.length + 2);
-      }
-      jsx = jsx.replace(/=>|>=/g, '  ');
-      const re = />([^<>]*)</g;
-      let m;
-      while ((m = re.exec(jsx))) {
-        const text = m[1].replace(/\{[^{}]*\}/g, '');
-        if (/\p{L}/u.test(text)) {
-          report(file, lineOf(jsx, m.index + 1 + m[1].search(/\S/)), `readable JSX text "${text.trim()}" (move it to src/copy/)`);
+      const tree = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+      const visit = (node) => {
+        if (node.kind === ts.SyntaxKind.JsxText && /\p{L}/u.test(node.text)) {
+          const offset = node.getStart(tree) + node.text.search(/\S/);
+          const line = tree.getLineAndCharacterOfPosition(offset).line + 1;
+          report(file, line, `readable JSX text "${node.text.trim()}" (move it to src/copy/)`);
         }
-      }
+        ts.forEachChild(node, visit);
+      };
+      visit(tree);
     }
   }
 }

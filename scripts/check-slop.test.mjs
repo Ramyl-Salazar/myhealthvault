@@ -28,12 +28,20 @@ function run(name) {
   return { code: result.status, out: result.stdout + result.stderr };
 }
 
-test('flags a banned phrase in copy', () => expect(run('copy-banned.ts')).toMatchObject({ code: 1, out: expect.stringMatching(/seamless/i) }));
-test('flags an exclamation mark in copy', () => expect(run('copy-bang.ts').code).toBe(1));
-test('flags an em dash in copy', () => expect(run('copy-emdash.ts').code).toBe(1));
-test('flags a gradient class in a component', () => expect(run('gradient.tsx').code).toBe(1));
-test('flags literal JSX text in a screen', () => expect(run('literal.tsx').code).toBe(1));
-test('flags an emoji', () => expect(run('emoji.tsx').code).toBe(1));
+
+const flags = (name, reason) => expect(run(name)).toMatchObject({ code: 1, out: expect.stringMatching(reason) });
+
+test('flags a banned phrase in copy', () => flags('copy-banned.ts', /banned phrase "seamless"/i));
+test('flags an exclamation mark in copy', () => flags('copy-bang.ts', /exclamation/));
+test('flags an em dash in copy', () => flags('copy-emdash.ts', /em dash/));
+test('flags a gradient class in a component', () => flags('gradient.tsx', /banned class pattern/));
+test('flags literal JSX text in a screen', () => flags('literal.tsx', /JSX text/));
+test('flags an emoji', () => flags('emoji.tsx', /emoji/));
 test('passes clean files', () => expect(run('clean.tsx').code).toBe(0));
-test('flags a banned phrase in markdown', () => expect(run('md-banned.md').code).toBe(1));
+test('flags a banned phrase in markdown', () => flags('md-banned.md', /banned phrase "seamless"/));
 test('ignores code in markdown', () => expect(run('md-code-bang.md').code).toBe(0));
+
+test('flags JSX text with an apostrophe', () => flags('apostrophe.tsx', /JSX text "Don't do this"/));
+test('flags JSX text on its own line, reporting that line', () => flags('multiline.tsx', /multiline\.tsx:5: readable JSX text/));
+test('passes a screen with generics, conditionals, maps and comparisons', () => expect(run('clean-react.tsx')).toMatchObject({ code: 0 }));
+test('passes a ui component with generics, conditionals, maps and comparisons', () => expect(run('clean-ui.tsx')).toMatchObject({ code: 0 }));
