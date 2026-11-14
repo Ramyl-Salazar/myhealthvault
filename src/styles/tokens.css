@@ -1,0 +1,11 @@
+/* Placeholder values until the design direction is approved.
+   Colours, type, spacing and radius come only from this file. */
+:root {
+  --color-text: #1a1a1a;
+  --color-surface: #ffffff;
+  --font-body: system-ui, sans-serif;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --radius-1: 0.25rem;
+}
