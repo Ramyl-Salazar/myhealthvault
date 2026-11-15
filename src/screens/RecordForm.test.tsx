@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RecordType } from '../domain/types';
 import { makeRecord } from '../domain/testing';
 import { form } from '../copy/form';
+import { SAMPLES } from '../domain/extract/samples';
 import { RecordForm } from './RecordForm';
 
 const { createRecord, updateRecord } = vi.hoisted(() => ({ createRecord: vi.fn(), updateRecord: vi.fn() }));
@@ -69,4 +70,13 @@ describe('editing a verified record', () => {
     await userEvent.click(screen.getByRole('button', { name: form.save }));
     expect(updateRecord).toHaveBeenCalledWith(before, expect.objectContaining({ title: 'New title' }));
   });
+});
+
+it('retains all four scanned lab results when saving', async () => {
+  const client = new QueryClient();
+  render(<QueryClientProvider client={client}><MemoryRouter><RecordForm initial={SAMPLES[1].candidates[0]} source="scan" resolveDocumentId={async () => 'doc-1'} onSaved={vi.fn()} /></MemoryRouter></QueryClientProvider>);
+  expect(screen.getAllByRole('textbox', { name: form.resultName })).toHaveLength(4);
+  await userEvent.click(screen.getByRole('button', { name: form.save }));
+  await vi.waitFor(() => expect(createRecord).toHaveBeenCalledWith(expect.objectContaining({ source: 'scan', documentId: 'doc-1', details: expect.objectContaining({ results: expect.arrayContaining([expect.objectContaining({ name: 'HbA1c' }), expect.objectContaining({ name: 'Creatinine' })]) }) })));
+  expect(createRecord.mock.calls.at(-1)?.[0].details.results).toHaveLength(4);
 });

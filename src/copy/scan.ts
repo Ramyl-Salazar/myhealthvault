@@ -1,0 +1,16 @@
+export const scan = {
+  notice: 'This is a public demo. Do not upload real medical documents.',
+  takePhoto: 'Take a photo',
+  choosePhoto: 'Choose a photo',
+  samples: 'Try a sample',
+  sampleNames: { prescription: 'Prescription sample', 'lab-report': 'Lab report sample', discharge: 'Discharge summary sample' },
+  reading: 'Reading the page…',
+  readError: 'The app could not read this page clearly.',
+  google: 'Read with Google AI',
+  manual: 'Type it in myself',
+  googleUnavailable: 'Google AI is not available right now. You can type the details in.',
+  review: 'Nothing is saved until you check it. Compare each field with the page and correct anything that is wrong.',
+  page: 'The scanned page',
+  discard: 'Discard',
+  back: 'Back to scan',
+} as const;
