@@ -26,9 +26,26 @@ function reminderText(reminder: Reminder, byId: Map<string, HealthRecord>): stri
   return reminders.ending(first?.title ?? '', date);
 }
 
+function localDate(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 export function Home() {
   const online = useOnline();
-  const [today] = useState(() => new Date().toISOString().slice(0, 10));
+  const [today, setToday] = useState(localDate);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const update = () => {
+      const now = new Date();
+      setToday(localDate(now));
+      clearTimeout(timer);
+      timer = setTimeout(update, new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime());
+    };
+    const onVisibility = () => { if (document.visibilityState === 'visible') update(); };
+    update();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { clearTimeout(timer); document.removeEventListener('visibilitychange', onVisibility); };
+  }, []);
   const [locallyDismissed, setLocallyDismissed] = useState<Set<string>>(new Set());
   const client = useQueryClient();
   const recordsQuery = useQuery({ queryKey: ['records'], queryFn: listRecords });

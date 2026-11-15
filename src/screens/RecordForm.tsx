@@ -38,7 +38,7 @@ function detailsFor(type: RecordType, values: Values, extraResults: Values[]): R
   switch (type) {
     case 'allergy': return { kind: type, reaction: nullable('reaction'), severity: (nullable('severity') as 'mild' | 'moderate' | 'severe' | null) };
     case 'medication': return { kind: type, genericName: nullable('genericName'), dose: nullable('dose'), frequency: nullable('frequency'), startOn: nullable('startOn'), endOn: nullable('endOn') };
-    case 'lab_result': return { kind: type, results: [values, ...extraResults].filter(row => row.resultName || row.resultValue).map(row => ({ name: row.resultName.trim(), value: row.resultValue.trim(), unit: row.resultUnit?.trim() || null, referenceRange: row.referenceRange?.trim() || null })) };
+    case 'lab_result': return { kind: type, results: [values, ...extraResults].filter(row => row.resultName?.trim() && row.resultValue?.trim()).map(row => ({ name: row.resultName.trim(), value: row.resultValue.trim(), unit: row.resultUnit?.trim() || null, referenceRange: row.referenceRange?.trim() || null })) };
     case 'immunization': return { kind: type, doseNumber: nullable('doseNumber') };
     case 'visit': return { kind: type, reason: nullable('reason'), followUpOn: nullable('followUpOn') };
     case 'procedure': return { kind: type };
@@ -55,6 +55,7 @@ export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumen
   const [extraResults, setExtraResults] = useState<Values[]>(() => initial?.details.kind === 'lab_result' ? initial.details.results.slice(1).map(result => ({ resultName: result.name, resultValue: result.value, resultUnit: result.unit ?? '', referenceRange: result.referenceRange ?? '' })) : []);
   const [status, setStatus] = useState<RecordStatus>(before?.status ?? 'active');
   const [titleError, setTitleError] = useState(false);
+  const [labError, setLabError] = useState(false);
   const client = useQueryClient();
 
   const details = detailsFor(type, values, extraResults);
@@ -72,6 +73,9 @@ export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumen
     if (!online) return;
     if (!candidate.title) { setTitleError(true); return; }
     setTitleError(false);
+    const incomplete = type === 'lab_result' && [values, ...extraResults].some(row => [row.resultName, row.resultValue, row.resultUnit, row.referenceRange].some(value => value?.trim()) && (!row.resultName?.trim() || !row.resultValue?.trim()));
+    if (incomplete) { setLabError(true); return; }
+    setLabError(false);
     mutation.mutate();
   }
 
@@ -90,6 +94,7 @@ export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumen
       {(['resultName', 'resultValue', 'resultUnit', 'referenceRange'] as const).map(key => <Field key={key} id={`${clientId.current}-${key}-${index}`} label={form[key]} value={result[key] ?? ''} onChange={event => setExtraResults(rows => rows.map((row, at) => at === index ? { ...row, [key]: event.target.value } : row))} />)}
       <Button type="button" variant="quiet" size="sm" onClick={() => setExtraResults(rows => rows.filter((_, at) => at !== index))}>{form.removeResult}</Button>
     </div>)}
+    {type === 'lab_result' && labError && <p role="alert" className="text-sm text-danger">{form.resultIncomplete}</p>}
     {type === 'lab_result' && <Button type="button" variant="soft" size="sm" onClick={() => setExtraResults(rows => [...rows, { resultName: '', resultValue: '', resultUnit: '', referenceRange: '' }])}>{form.addResult}</Button>}
     {type === 'immunization' && field('doseNumber', form.doseNumber)}
     {type === 'visit' && <>{field('reason', form.reason)}{field('followUpOn', form.followUpOn, 'date')}</>}

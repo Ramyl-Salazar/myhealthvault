@@ -33,6 +33,6 @@ const safeStorage = {
   },
 };
 
-export const persister = createSyncStoragePersister({ storage: safeStorage, key: 'mhv-query-cache' });
+export const persister = createSyncStoragePersister({ storage: safeStorage, key: 'mhv-query-cache', throttleTime: 0 });
 
 export const persistOptions = { persister, maxAge: DAY_MS };

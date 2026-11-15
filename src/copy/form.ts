@@ -24,6 +24,7 @@ export const form = {
   resultName: 'Result name',
   resultValue: 'Value',
   resultUnit: 'Unit',
+  resultIncomplete: 'Enter a result name and value, or remove this row.',
   referenceRange: 'Reference range',
   addResult: 'Add another result',
   removeResult: 'Remove result',

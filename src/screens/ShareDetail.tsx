@@ -14,7 +14,7 @@ import { OfflineActionReason } from '../ui/OfflineBanner';
 import { useOnline } from '../ui/useOnline';
 
 function shownDate(iso: string): string {
-  return `${formatDate(iso.slice(0, 10))}, ${new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} UTC`;
+  return `${formatDate(iso.slice(0, 10))}${share.dateSeparator}${new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}${share.utcSuffix}`;
 }
 
 export function ShareDetail() {
@@ -52,7 +52,7 @@ export function ShareDetail() {
         <p className="text-sm text-ink-muted">{active ? share.active : share.ended}</p>
         <p className="text-sm text-ink-muted tabular-nums">{share.expires} {shownDate(item.expiresAt)}</p>
         {active && <p className="text-sm tabular-nums">{share.timeLeft(Math.ceil((Date.parse(item.expiresAt) - Date.now()) / 60_000))}</p>}
-        {active && url ? <div className="grid gap-3">{qr && <img src={qr} alt={share.qrLabel} className="w-52 max-w-full bg-white p-2" />}<label className="grid gap-1 text-sm text-ink-muted">{share.link}<input readOnly value={url} className="min-h-12 w-full rounded-sm border border-line bg-bg px-3 text-ink wrap-anywhere" /></label><Button type="button" variant="soft" onClick={() => void copyLink()}>{share.copy}</Button>{copyMessage && <p role="status" className="text-sm">{copyMessage}</p>}</div> : active ? <p className="text-sm text-ink-muted">{share.unavailableLink}</p> : null}
+        {active && url ? <div className="grid gap-3">{qr && <img src={qr} alt={share.qrLabel} className="w-52 max-w-full bg-surface p-2" />}<label className="grid gap-1 text-sm text-ink-muted">{share.link}<input readOnly value={url} className="min-h-12 w-full rounded-sm border border-line bg-bg px-3 text-ink wrap-anywhere" /></label><Button type="button" variant="soft" onClick={() => void copyLink()}>{share.copy}</Button>{copyMessage && <p role="status" className="text-sm">{copyMessage}</p>}</div> : active ? <p className="text-sm text-ink-muted">{share.unavailableLink}</p> : null}
         {active && <><Button type="button" variant="quiet" busy={mutation.isPending} disabled={!online} onClick={() => mutation.mutate()}>{share.stop}</Button><OfflineActionReason /></>}
         {mutation.isError && <p role="alert" className="text-sm text-danger">{share.stopError}</p>}
       </section>

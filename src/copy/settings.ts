@@ -1,7 +1,7 @@
 export const settings = {
   title: 'Settings', profile: 'Profile', name: 'Name', birthDate: 'Birth date', sex: 'Sex', bloodType: 'Blood type', contacts: 'Emergency contacts',
   day: 'Day', month: 'Month', year: 'Year', invalidBirthDate: 'Enter a real birth date.', months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  sexNone: 'Not specified', sexOptions: [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }, { value: 'another_description', label: 'Another description' }, { value: 'prefer_not_to_say', label: 'Prefer not to say' }],
+  sexNone: 'Not specified',
   contact: (number: number) => `Contact ${number}`,
   contactName: 'Contact name', relation: 'Relationship', phone: 'Phone number', addContact: 'Add contact', removeContact: 'Remove contact', save: 'Save profile', saved: 'Profile saved.',
   emergency: 'Emergency card', emergencyToggle: 'Save an emergency card on this device', pin: 'Device PIN',
