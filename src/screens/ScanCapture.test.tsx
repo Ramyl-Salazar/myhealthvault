@@ -74,6 +74,9 @@ it('calls Google only after the choice is pressed and falls back to manual entry
   expect(await screen.findByText('The app could not read this page clearly.')).not.toBeNull();
   expect(readWithGoogle).not.toHaveBeenCalled();
   await userEvent.click(screen.getByRole('button', { name: 'Read with Google AI' }));
+  expect(readWithGoogle).not.toHaveBeenCalled();
+  await userEvent.click(screen.getByRole('button', { name: 'Send to Google AI' }));
+  await waitFor(() => expect(readWithGoogle).toHaveBeenCalledWith('doc-1'));
   expect(readWithGoogle).toHaveBeenCalledTimes(1);
   expect(await screen.findByText('Google AI is not available right now. You can type the details in.')).not.toBeNull();
   expect(screen.getByRole('textbox', { name: 'Title' })).not.toBeNull();

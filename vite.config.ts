@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.mjs'],
+    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.mjs', 'supabase/functions/**/*.test.ts'],
     exclude: ['node_modules', 'dist', 'scripts/fixtures/**', 'tests/**'],
   },
 });
