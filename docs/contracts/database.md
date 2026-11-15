@@ -24,7 +24,7 @@ Every `user_id` (and `profiles.id`) references `auth.users(id) on delete cascade
 
 ### profiles
 
-One row per user, created by `seed_demo_data()`.
+One row per user. Profiles are created only by `seed_demo_data()`. Clients update their row; they never insert or upsert it (the client has no insert privilege, so an upsert fails).
 
 | Column | Type | Meaning |
 |---|---|---|
@@ -53,7 +53,7 @@ One row per user, created by `seed_demo_data()`.
 | `notes` | text, null | At most 5000 characters. |
 | `status` | `record_status`, default `active` | |
 | `trust_level` | `trust_level`, default `patient_entered` | |
-| `document_id` | uuid, null | The scanned document this came from. Must belong to the same user (composite foreign key on `(document_id, user_id)`). Set to null if the document row is deleted. |
+| `document_id` | uuid, null | The scanned document this came from. Must belong to the same user (composite foreign key on `(document_id, user_id)`, indexed by `records_document_id_user_id_idx`). Set to null if the document row is deleted. |
 | `verified_by` | text, null | Clinician name as typed. |
 | `verified_license` | text, null | Licence number as typed. Not checked. |
 | `verified_at` | timestamptz, null | |
@@ -63,7 +63,11 @@ One row per user, created by `seed_demo_data()`.
 Rules enforced by the database:
 
 - The three `verified_*` fields are all set when `trust_level = 'clinician_verified'`, and all null otherwise. When an edit drops trust, send `trust_level` and the three nulls together.
-- A signed-in client cannot insert a `clinician_verified` record, cannot change a record to `clinician_verified`, and cannot change the verifier fields of a verified record. It can edit other fields of a verified record and can clear the verification. Only the `share-verify` Edge Function (service role) and `seed_demo_data()` set verifications. The error is `42501 not allowed`.
+- A signed-in client cannot insert a `clinician_verified` record, cannot change a record to `clinician_verified`, and cannot change the verifier fields of a verified record. Only the `share-verify` Edge Function (service role) and `seed_demo_data()` set verifications. The error is `42501 not allowed`.
+- While a record stays `clinician_verified`, a client may change only the non-clinical fields `provider_name` and `notes`; the verification is kept. Changing any clinical field (`type`, `title`, `occurred_on`, `details`, `status`, `document_id`) on a verified record is rejected (`42501 not allowed`) unless the same update sets `trust_level` to `patient_entered` and sets `verified_by`, `verified_license` and `verified_at` to null. That combined update succeeds. `details` is compared as jsonb, so sending the same object with keys in a different order is not a change. `trustAfterEdit` in `src/domain/trust.ts` drops trust on a change to `title`, `occurredOn`, `details` or `status`; the database also counts `type` and `document_id`, which `updateRecord` does not send.
+- The verification guard (trigger `records_guard_verification`) identifies clients by role name: it applies when the current role is `authenticated` or `anon`. Service role and any `security definer` function run as other roles and bypass it. Any future `security definer` function that writes `records` on a client's behalf must enforce these rules itself.
+- Deleting a document linked to a verified record sets `document_id` to null and keeps the verification (the foreign key action runs as the table owner).
+- `document_supported` can be set by a client without a linked document. In this demo that is accepted and not enforced; the seed does it too.
 
 ### details shapes
 
@@ -128,8 +132,8 @@ Note for the share Edge Functions: record ids are checked against the owner only
 | Column | Type | Meaning |
 |---|---|---|
 | `user_id` | uuid | Owner. |
-| `reminder_key` | text | `Reminder.key` from `computeReminders`, for example `dup:metformin`. |
-| `created_at` | timestamptz | |
+| `reminder_key` | text | `Reminder.key` from `computeReminders`, for example `dup:metformin`. At most 200 characters. |
+| `created_at` | timestamptz, default `now()` | When the reminder was dismissed. Not in the brief's column list; added so dismissals can be listed in order. |
 
 Primary key `(user_id, reminder_key)`. Dismissing twice: use `upsert` or ignore the duplicate-key error.
 

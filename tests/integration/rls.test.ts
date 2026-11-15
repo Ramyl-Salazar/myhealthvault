@@ -85,6 +85,7 @@ describe.skipIf(!configured)('database access rules', () => {
   let aRecordId: string;
   let aShareId: string;
   let aPath: string;
+  let aDocumentId: string;
 
   beforeAll(async () => {
     a = await signInVisitor();
@@ -115,6 +116,12 @@ describe.skipIf(!configured)('database access rules', () => {
       .upload(aPath, new Blob([JPEG_BYTES], { type: 'image/jpeg' }), { contentType: 'image/jpeg' });
     if (upload.error) throw new Error(`upload failed: ${upload.error.message}`);
     a.storagePaths.push(aPath);
+
+    aDocumentId = documentId;
+    const documentRow = await a.client
+      .from('documents')
+      .insert({ id: documentId, user_id: a.userId, storage_path: aPath, kind: 'prescription' });
+    if (documentRow.error) throw new Error(`insert document failed: ${documentRow.error.message}`);
   }, 30_000);
 
   afterAll(async () => {
@@ -179,6 +186,110 @@ describe.skipIf(!configured)('database access rules', () => {
     expect(inserted.error).not.toBeNull();
   });
 
+  it('a client cannot update its own record to clinician verified', async () => {
+    const target = await a.client
+      .from('records')
+      .select('id')
+      .eq('trust_level', 'patient_entered')
+      .limit(1)
+      .single();
+    expect(target.error).toBeNull();
+    const updated = await a.client
+      .from('records')
+      .update({
+        trust_level: 'clinician_verified',
+        verified_by: 'Someone',
+        verified_license: '0000000',
+        verified_at: new Date().toISOString(),
+      })
+      .eq('id', target.data?.id)
+      .select();
+    expect(updated.error).not.toBeNull();
+    const after = await a.client.from('records').select('trust_level').eq('id', target.data?.id).single();
+    expect(after.data?.trust_level).toBe('patient_entered');
+  });
+
+  // verified records: clinical fields cannot change while the verification stays
+  it('editing the dose of a verified record without dropping trust is rejected', async () => {
+    const losartan = await a.client
+      .from('records')
+      .select('id, details, trust_level')
+      .eq('title', 'Losartan')
+      .single();
+    expect(losartan.data?.trust_level).toBe('clinician_verified');
+    const changed = { ...(losartan.data?.details as Record<string, unknown>), dose: '500 mg' };
+    const { error } = await a.client.from('records').update({ details: changed }).eq('id', losartan.data?.id).select();
+    expect(error).not.toBeNull();
+    const after = await a.client.from('records').select('details').eq('id', losartan.data?.id).single();
+    expect((after.data?.details as { dose: string }).dose).toBe('50 mg');
+  });
+
+  it('editing only the notes of a verified record keeps the verification', async () => {
+    const losartan = await a.client.from('records').select('id').eq('title', 'Losartan').single();
+    const { data, error } = await a.client
+      .from('records')
+      .update({ notes: 'Take with breakfast' })
+      .eq('id', losartan.data?.id)
+      .select('notes, trust_level, verified_by');
+    expect(error).toBeNull();
+    expect(data).toHaveLength(1);
+    expect(data?.[0]).toMatchObject({ notes: 'Take with breakfast', trust_level: 'clinician_verified' });
+    expect(data?.[0].verified_by).not.toBeNull();
+  });
+
+  it('editing the title of a verified record succeeds when trust drops and the verifier is cleared', async () => {
+    const cataract = await a.client
+      .from('records')
+      .select('id, trust_level')
+      .eq('title', 'Cataract surgery, right eye')
+      .single();
+    expect(cataract.data?.trust_level).toBe('clinician_verified');
+    const { data, error } = await a.client
+      .from('records')
+      .update({
+        title: 'Cataract surgery, left eye',
+        trust_level: 'patient_entered',
+        verified_by: null,
+        verified_license: null,
+        verified_at: null,
+      })
+      .eq('id', cataract.data?.id)
+      .select('title, trust_level, verified_by, verified_license, verified_at');
+    expect(error).toBeNull();
+    expect(data?.[0]).toEqual({
+      title: 'Cataract surgery, left eye',
+      trust_level: 'patient_entered',
+      verified_by: null,
+      verified_license: null,
+      verified_at: null,
+    });
+  });
+
+  it("B cannot link its record to A's document", async () => {
+    const own = await b.client
+      .from('records')
+      .insert({ type: 'diagnosis', title: 'Own linked record', details: { kind: 'diagnosis' } })
+      .select('id')
+      .single();
+    expect(own.error).toBeNull();
+    const linked = await b.client.from('records').update({ document_id: aDocumentId }).eq('id', own.data?.id).select();
+    expect(linked.error).not.toBeNull();
+    const inserted = await b.client.from('records').insert({
+      type: 'diagnosis',
+      title: 'Planted link',
+      details: { kind: 'diagnosis' },
+      document_id: aDocumentId,
+    });
+    expect(inserted.error).not.toBeNull();
+  });
+
+  it('a client with no session gets no records', async () => {
+    const nobody = newClient();
+    const { data, error } = await nobody.from('records').select();
+    expect(error !== null || (data ?? []).length === 0).toBe(true);
+    expect(data ?? []).toHaveLength(0);
+  });
+
   // profiles
   it("B cannot read A's profile", async () => {
     const { data } = await b.client.from('profiles').select().eq('id', a.userId);
@@ -216,9 +327,15 @@ describe.skipIf(!configured)('database access rules', () => {
     expect(error).not.toBeNull();
   });
 
+  it("B cannot read A's share access log", async () => {
+    const { data, error } = await b.client.from('share_access_log').select().eq('share_id', aShareId);
+    expect(error).toBeNull();
+    expect(data).toHaveLength(0);
+  });
+
   it('a client cannot read usage_counters', async () => {
-    const { data, error } = await a.client.from('usage_counters').select();
-    expect(error !== null || (data ?? []).length === 0).toBe(true);
+    const { error } = await a.client.from('usage_counters').select();
+    expect(error).not.toBeNull();
   });
 
   // documents and storage
@@ -236,6 +353,19 @@ describe.skipIf(!configured)('database access rules', () => {
         contentType: 'image/jpeg',
       });
     expect(error).not.toBeNull();
+  });
+
+  it("B removing A's object leaves it in place", async () => {
+    // Storage reports success with an empty list when a removal is denied, so check the object.
+    await b.client.storage.from('documents').remove([aPath]);
+    const still = await a.client.storage.from('documents').download(aPath);
+    expect(still.error).toBeNull();
+  });
+
+  it("B moving A's object leaves it in place", async () => {
+    await b.client.storage.from('documents').move(aPath, `${b.userId}/${randomUUID()}.jpg`);
+    const still = await a.client.storage.from('documents').download(aPath);
+    expect(still.error).toBeNull();
   });
 
   it("a document row cannot point at another user's file", async () => {

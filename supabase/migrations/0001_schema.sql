@@ -84,7 +84,8 @@ create table public.records (
 );
 
 create index records_user_id_idx on public.records (user_id);
-create index records_document_id_idx on public.records (document_id);
+-- Serves the composite foreign key to documents (id, user_id), and lookups by document_id.
+create index records_document_id_user_id_idx on public.records (document_id, user_id);
 
 -- shares: the raw token is never stored, only its SHA-256 hex digest.
 
@@ -149,9 +150,12 @@ create trigger records_set_updated_at
   before update on public.records
   for each row execute function public.set_updated_at();
 
--- A signed-in client may not create or alter a clinician verification. Only the
--- share-verify Edge Function (service role) and seed_demo_data() (definer) can.
--- Clearing a verification (trust dropping back) stays allowed.
+-- A signed-in client may not create or alter a clinician verification, and may not
+-- change a clinical field of a record while it stays verified. Only the share-verify
+-- Edge Function (service role) and seed_demo_data() (definer) can set a verification.
+-- Clearing a verification (trust dropping back, verifier fields nulled) stays allowed.
+-- Clients are identified by role name: a security definer function writing records on
+-- a client's behalf runs as its owner, bypasses this guard and must enforce the rule itself.
 create function public.records_guard_verification()
 returns trigger
 language plpgsql
@@ -171,6 +175,17 @@ begin
     or new.verified_by is distinct from old.verified_by
     or new.verified_license is distinct from old.verified_license
     or new.verified_at is distinct from old.verified_at then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  -- The record stays verified: only non-clinical fields (provider_name, notes) may change.
+  -- A client changing a clinical field must drop trust and clear the verifier in the same update.
+  -- details is compared as jsonb, so key order does not matter.
+  if new.type is distinct from old.type
+    or new.title is distinct from old.title
+    or new.occurred_on is distinct from old.occurred_on
+    or new.details is distinct from old.details
+    or new.status is distinct from old.status
+    or new.document_id is distinct from old.document_id then
     raise exception 'not allowed' using errcode = '42501';
   end if;
   return new;
