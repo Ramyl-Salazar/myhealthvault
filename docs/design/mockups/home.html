@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home mockup</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body class="mock-page">
+<main class="mhv" data-screen="Home">
+  <div class="top">
+    <div class="hello">
+      <span class="avatar">LV</span>
+      <div>
+        <h1>Hello, Lourdes</h1>
+        <p class="xs muted">Sunday, <span class="num">15 Nov 2026</span></p>
+      </div>
+    </div>
+    <span class="demo">Demo data</span>
+  </div>
+  <div class="body">
+    <div class="quick">
+      <a class="card" href="#"><span class="tile primary"><i data-i="camera"></i></span>Scan a document</a>
+      <a class="card" href="#"><span class="tile visit"><i data-i="qr"></i></span>Share with a doctor</a>
+      <a class="card" href="#"><span class="tile allergy"><i data-i="shield"></i></span>Emergency card</a>
+    </div>
+
+    <section>
+      <h2>Needs your attention</h2>
+      <ul class="card rows">
+        <li>
+          <span class="tile result"><i data-i="alert"></i></span>
+          <div>
+            <p class="what">Possible duplicate medicine</p>
+            <p class="small muted">Metformin and Glucophage <span class="num">500 mg</span> may be the same medicine (metformin).</p>
+          </div>
+          <button class="x" aria-label="Dismiss this reminder"><i data-i="x"></i></button>
+        </li>
+        <li>
+          <span class="tile medicine"><i data-i="pill"></i></span>
+          <div>
+            <p class="what">Losartan <span class="num">50 mg</span> runs out soon</p>
+            <p class="small muted">On <span class="num">20 Nov 2026</span>, 5 days from today.</p>
+          </div>
+          <button class="x" aria-label="Dismiss this reminder"><i data-i="x"></i></button>
+        </li>
+        <li>
+          <span class="tile visit"><i data-i="calendar"></i></span>
+          <div>
+            <p class="what">Follow-up visit due</p>
+            <p class="small muted"><span class="num">25 Nov 2026</span> at San Rafael Medical Center.</p>
+          </div>
+          <button class="x" aria-label="Dismiss this reminder"><i data-i="x"></i></button>
+        </li>
+      </ul>
+      <p class="caution">This is a reminder, not medical advice. Ask your doctor or pharmacist before changing any medicine.</p>
+    </section>
+
+    <section>
+      <h2>Health summary</h2>
+
+      <div class="card group">
+        <div class="group-head"><span class="tile allergy"><i data-i="alert"></i></span><h2>Allergies</h2><span class="count">1</span></div>
+        <ul class="items">
+          <li><span><span class="allergy-name">Penicillin</span><span class="detail">Rash, moderate</span></span><span class="trust clinician mark" title="Verified by a clinician"><i data-i="check"></i></span></li>
+        </ul>
+      </div>
+
+      <div class="card group">
+        <div class="group-head"><span class="tile condition"><i data-i="heart"></i></span><h2>Conditions</h2><span class="count">2</span></div>
+        <ul class="items">
+          <li><span>Type 2 diabetes<span class="detail">Since <span class="num">2016</span></span></span><span class="trust clinician mark" title="Verified by a clinician"><i data-i="check"></i></span></li>
+          <li><span>Hypertension<span class="detail">Since <span class="num">2019</span></span></span><span class="trust document mark" title="Supported by a document"><i data-i="file"></i></span></li>
+        </ul>
+      </div>
+
+      <div class="card group">
+        <div class="group-head"><span class="tile medicine"><i data-i="pill"></i></span><h2>Medicines</h2><span class="count">3</span></div>
+        <ul class="items">
+          <li><span>Metformin<span class="detail"><span class="num">500 mg</span>, twice daily</span></span><span class="trust document mark" title="Supported by a document"><i data-i="file"></i></span></li>
+          <li><span>Glucophage<span class="detail"><span class="num">500 mg</span>, twice daily</span></span><span class="trust patient mark" title="Entered by patient"><i data-i="pencil"></i></span></li>
+          <li><span>Losartan<span class="detail"><span class="num">50 mg</span>, once daily</span></span><span class="trust document mark" title="Supported by a document"><i data-i="file"></i></span></li>
+        </ul>
+      </div>
+
+      <div class="card group">
+        <div class="group-head"><span class="tile result"><i data-i="flask"></i></span><h2>Recent results</h2><span class="count">1</span></div>
+        <ul class="items">
+          <li><span>HbA1c <span class="num">7.2 %</span><span class="detail"><span class="num">02 Oct 2026</span>, Lakandula Diagnostics</span></span><span class="trust document mark" title="Supported by a document"><i data-i="file"></i></span></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+  <nav class="nav" aria-label="Main">
+    <a class="on" href="#"><span class="ic"><i data-i="home"></i></span>Home</a>
+    <a href="#"><span class="ic"><i data-i="clock"></i></span>Timeline</a>
+    <a class="add" href="#"><span class="ic"><i data-i="plus"></i></span>Add</a>
+    <a href="#"><span class="ic"><i data-i="share"></i></span>Share</a>
+    <a href="#"><span class="ic"><i data-i="sliders"></i></span>Settings</a>
+  </nav>
+</main>
+<script src="mock.js"></script>
+</body>
+</html>

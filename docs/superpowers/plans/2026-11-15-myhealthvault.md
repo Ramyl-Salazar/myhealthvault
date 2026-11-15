@@ -110,7 +110,7 @@ Tasks 3, 4 and 5 touch different files and may run in parallel.
 - Create: `docs/design/direction.md`, `docs/design/mockups/{home,timeline,scan-confirm,clinician,emergency}.html`
 - Modify: `src/styles/tokens.css`
 
-**Produces:** CSS custom properties consumed by every screen: `--color-bg`, `--color-surface`, `--color-ink`, `--color-ink-muted`, `--color-line`, `--color-accent`, `--color-danger`, `--color-trust-patient`, `--color-trust-document`, `--color-trust-clinician`, `--font-sans`, `--font-mono`, `--text-xs` to `--text-2xl`, `--space-1` to `--space-8`, `--radius-sm`, `--radius-md`, light and dark values for each colour.
+**Produces:** CSS custom properties in `src/styles/tokens.css`, consumed by every screen: `--color-bg`, `--color-surface`, `--color-ink`, `--color-ink-muted`, `--color-line`, `--color-primary`, `--color-primary-soft`, `--color-on-primary`, `--color-verified`, `--color-verified-soft`, `--color-patient`, `--color-patient-soft`, `--color-danger`, `--color-danger-soft`, `--cat-<type>` and `--cat-<type>-soft` for `medicine`, `condition`, `result`, `visit`, `vaccine`, `procedure`, `allergy`, `--shadow-card`, `--font-sans`, `--font-mono`, `--text-xs` to `--text-2xl`, `--space-1` to `--space-8`, `--radius-sm`, `--radius-md`, `--radius-pill`, with light and dark values. The approved mockups in `docs/design/mockups/` are the visual reference for every screen task; `mock.css` shows how each component is built from the tokens.
 
 - [ ] **Step 1:** Load `craftwork-design` and `emil-design-eng`. Choose one direction for a calm clinical record tool; write it to `direction.md` (type pairing, palette, spacing, radius, motion, how the three trust labels look).
 - [ ] **Step 2:** Build the five mockups as static HTML with seeded content at 360 wide, light and dark.
@@ -290,9 +290,9 @@ Timeline groups by year, newest first, records with no date last under `Date not
 
 **Consumes:** `buildSummary`, `computeReminders`, `listDismissed`, `dismissReminder`.
 
-Summary sentences are fixed templates in `src/copy/home.ts` filled from record fields only. Reminder text: follow-up `Follow-up due {date} at {provider}`; ending `{title} runs out on {date}`; duplicate `Possible duplicate: {titles} may be the same medicine ({generic})`. Each reminder card ends with the caution line.
+Summary sentences are fixed templates in `src/copy/home.ts` filled from record fields only. Reminder text: follow-up `Follow-up due {date} at {provider}`; ending `{title} runs out on {date}`; duplicate `Possible duplicate: {titles} may be the same medicine ({generic})`. The caution line appears once, directly under the reminder list, whenever at least one reminder is shown.
 
-- [ ] **Step 1: Write failing tests**: seeded data shows two conditions, one allergy, three medications; the duplicate reminder names Metformin and Glucophage; dismissing a reminder removes it and calls `dismissReminder('dup:metformin')`; with no records, each section shows its own empty line; every reminder card contains the caution line.
+- [ ] **Step 1: Write failing tests**: seeded data shows two conditions, one allergy, three medications; the duplicate reminder names Metformin and Glucophage; dismissing a reminder removes it and calls `dismissReminder('dup:metformin')`; with no records, each section shows its own empty line; the caution line shows once when there is at least one reminder and not at all when there are none.
 - [ ] **Step 2: Run**, confirm failure. **Step 3: Implement.** **Step 4: Run** tests and `check:slop`.
 - [ ] **Step 5: Commit**: `feat: add home summary and reminders`. Merge `phase-2-records`.
 

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan confirm mockup</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body class="mock-page">
+<main class="mhv" data-screen="Scan confirm">
+  <div class="top">
+    <h1>Check what was read</h1>
+    <span class="demo">Demo data</span>
+  </div>
+  <div class="body">
+    <p class="small muted">Nothing is saved until you check it. Compare each field with the page and correct anything that is wrong.</p>
+
+    <div class="paper" aria-label="The scanned page">
+      <span class="stamp">SAMPLE</span>
+      San Rafael Medical Center<br>
+      Date: 14 Nov 2026<br>
+      Patient: Lourdes Villareal<br>
+      Rx<br>
+      1. Metformin 500 mg tab, twice daily<br>
+      2. Losartan tab, once daily<br>
+      3. Atorvastatin 20 mg tab, once daily at bedtime
+    </div>
+
+    <div class="progress"><span>Record 2 of 3</span><span class="bar"><span></span></span></div>
+
+    <div class="card cand">
+      <div class="cand-head">
+        <span class="tile medicine"><i data-i="pill"></i></span>
+        <div>
+          <h2>Medicine</h2>
+          <span class="trust document"><i data-i="file"></i>Supported by a document</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Medicine name</label>
+        <div class="input">Losartan</div>
+      </div>
+      <div class="two">
+        <div class="field">
+          <label>Dose</label>
+          <div class="input empty"></div>
+        </div>
+        <div class="field">
+          <label>How often</label>
+          <div class="input">once daily</div>
+        </div>
+      </div>
+      <p class="note"><i data-i="alert"></i><span>No dose was found on the page. Leave it empty or type what the page says.</span></p>
+      <div class="field">
+        <label>Date on the page</label>
+        <div class="input num">14 Nov 2026</div>
+      </div>
+      <div class="field">
+        <label>Provider</label>
+        <div class="input">San Rafael Medical Center</div>
+      </div>
+      <div class="row-btns">
+        <button class="btn quiet">Discard</button>
+        <button class="btn"><i data-i="check"></i>Save record</button>
+      </div>
+    </div>
+  </div>
+</main>
+<script src="mock.js"></script>
+</body>
+</html>
