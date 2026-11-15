@@ -13,6 +13,8 @@ import { IconTile } from '../ui/IconTile';
 import { Screen } from '../ui/Screen';
 import { Skeleton } from '../ui/Skeleton';
 import { TrustBadge } from '../ui/TrustBadge';
+import { OfflineActionReason } from '../ui/OfflineBanner';
+import { useOnline } from '../ui/useOnline';
 
 const types: RecordType[] = ['allergy', 'medication', 'diagnosis', 'lab_result', 'immunization', 'procedure', 'visit'];
 
@@ -29,6 +31,7 @@ function detailText(record: HealthRecord): string[] {
 }
 
 export function ClinicianView() {
+  const online = useOnline();
   const { token = '' } = useParams();
   const [state, setState] = useState<'loading' | 'ready' | 'ended' | 'error'>('loading');
   const [data, setData] = useState<ClinicianShare | null>(null);
@@ -62,6 +65,7 @@ export function ClinicianView() {
   }, [data?.expiresAt]);
 
   async function verify(recordId: string, next: { name: string; license: string }) {
+    if (!online) return;
     setPendingId(recordId);
     setVerifyError(false);
     const result = await verifyClinicianRecord(token, recordId, next.name, next.license);
@@ -104,8 +108,8 @@ export function ClinicianView() {
         if (!group.length) return null;
         return <section key={type} className="grid gap-2"><h2 className="text-lg font-bold">{clinician.groups[type]}</h2><ul className="divide-y divide-line rounded-md bg-surface shadow-card">{group.map(record => <li key={record.id} className="grid gap-3 p-4"><div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:flex"><IconTile type={record.type} /><div className="min-w-0 flex-1"><h3 className="font-semibold wrap-anywhere">{record.title}</h3>{detailText(record).map((value, index) => <p key={index} className="text-sm text-ink-muted wrap-anywhere tabular-nums">{value}</p>)}{record.occurredOn && <p className="text-xs text-ink-muted tabular-nums">{formatDate(record.occurredOn)}</p>}{record.providerName && <p className="text-xs text-ink-muted wrap-anywhere">{record.providerName}</p>}</div><div className="col-start-2"><TrustBadge level={record.trustLevel} /></div></div>
           {record.details.kind === 'lab_result' && record.details.results.some(result => result.referenceRange) && <dl className="grid gap-1 text-xs text-ink-muted">{record.details.results.filter(result => result.referenceRange).map((result, index) => <div key={index}><dt className="inline">{result.name}</dt><dd className="inline"> · {clinician.referenceRange} {result.referenceRange}</dd></div>)}</dl>}
-          {record.trustLevel === 'clinician_verified' ? record.verifiedBy && <p className="text-sm text-verified">{clinician.verifiedBy(record.verifiedBy)}</p> : <Button type="button" size="sm" variant="soft" busy={pendingId === record.id} onClick={() => begin(record.id)}>{clinician.verify}</Button>}
-          {selectedId === record.id && <form onSubmit={submit} className="grid gap-3 border-t border-line pt-3"><Field id="clinician-name" label={clinician.name} required maxLength={200} value={name} onChange={event => setName(event.target.value)} /><Field id="clinician-license" label={clinician.license} required maxLength={100} value={license} onChange={event => setLicense(event.target.value)} /><p className="text-xs text-ink-muted">{clinician.licenseNote}</p><Button type="submit" busy={pendingId === record.id}>{clinician.confirm}</Button>{verifyError && <p role="alert" className="text-sm text-danger">{clinician.verifyError}</p>}</form>}
+          {record.trustLevel === 'clinician_verified' ? record.verifiedBy && <p className="text-sm text-verified">{clinician.verifiedBy(record.verifiedBy)}</p> : <><Button type="button" size="sm" variant="soft" busy={pendingId === record.id} disabled={!online} onClick={() => begin(record.id)}>{clinician.verify}</Button><OfflineActionReason /></>}
+          {selectedId === record.id && <form onSubmit={submit} className="grid gap-3 border-t border-line pt-3"><Field id="clinician-name" label={clinician.name} required maxLength={200} value={name} onChange={event => setName(event.target.value)} /><Field id="clinician-license" label={clinician.license} required maxLength={100} value={license} onChange={event => setLicense(event.target.value)} /><p className="text-xs text-ink-muted">{clinician.licenseNote}</p><Button type="submit" busy={pendingId === record.id} disabled={!online}>{clinician.confirm}</Button>{verifyError && <p role="alert" className="text-sm text-danger">{clinician.verifyError}</p>}</form>}
         </li>)}</ul></section>;
       })}
       {verifyError && !selectedId && <p role="alert" className="text-sm text-danger">{clinician.verifyError}</p>}

@@ -16,6 +16,7 @@ import { ReminderCard } from '../ui/ReminderCard';
 import { Screen } from '../ui/Screen';
 import { Skeleton } from '../ui/Skeleton';
 import { SummarySection } from '../ui/SummarySection';
+import { useOnline } from '../ui/useOnline';
 
 function reminderText(reminder: Reminder, byId: Map<string, HealthRecord>): string {
   const first = byId.get(reminder.recordIds[0]);
@@ -26,6 +27,7 @@ function reminderText(reminder: Reminder, byId: Map<string, HealthRecord>): stri
 }
 
 export function Home() {
+  const online = useOnline();
   const [today] = useState(() => new Date().toISOString().slice(0, 10));
   const [locallyDismissed, setLocallyDismissed] = useState<Set<string>>(new Set());
   const client = useQueryClient();
@@ -56,7 +58,7 @@ export function Home() {
         <Link to="/emergency" className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-md bg-surface p-2 text-center text-xs font-medium leading-tight text-ink shadow-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><span className="grid size-10 place-items-center rounded-md bg-cat-allergy-soft text-cat-allergy"><ShieldAlert size={20} strokeWidth={1.9} aria-hidden="true" /></span>{home.emergency}</Link>
       </div>
       <section className="flex flex-col gap-3"><h2 className="font-semibold">{home.attention}</h2>
-        {visibleReminders.length === 0 ? <p className="text-sm text-ink-muted">{home.attentionEmpty}</p> : <><ul className="rounded-md bg-surface shadow-card">{visibleReminders.map(reminder => <ReminderCard key={reminder.key} reminder={reminder} text={reminderText(reminder, byId)} onDismiss={key => dismissal.mutate(key)} busy={dismissal.isPending} />)}</ul><p className="text-xs text-ink-muted">{common.caution}</p></>}
+        {visibleReminders.length === 0 ? <p className="text-sm text-ink-muted">{home.attentionEmpty}</p> : <><ul className="rounded-md bg-surface shadow-card">{visibleReminders.map(reminder => <ReminderCard key={reminder.key} reminder={reminder} text={reminderText(reminder, byId)} onDismiss={key => dismissal.mutate(key)} busy={dismissal.isPending || !online} />)}</ul><p className="text-xs text-ink-muted">{common.caution}</p></>}
         {dismissal.isError && <ErrorState message={reminders.error} onRetry={() => dismissal.mutate(dismissal.variables as string)} />}
       </section>
       <section className="flex flex-col gap-3"><h2 className="font-semibold">{home.summary}</h2>

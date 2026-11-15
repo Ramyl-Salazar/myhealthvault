@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { form, screens, share } from '../copy';
 import { listRecords } from '../data/records';
@@ -13,11 +13,15 @@ import { Field } from '../ui/Field';
 import { IconTile } from '../ui/IconTile';
 import { Screen } from '../ui/Screen';
 import { Skeleton } from '../ui/Skeleton';
+import { OfflineActionReason } from '../ui/OfflineBanner';
+import { useOnline } from '../ui/useOnline';
 
 const types: RecordType[] = ['diagnosis', 'allergy', 'medication', 'lab_result', 'immunization', 'procedure', 'visit'];
 type Scope = 'everything' | 'category' | 'individual';
 
 export function ShareCreate() {
+  const online = useOnline();
+  const client = useQueryClient();
   const navigate = useNavigate();
   const query = useQuery({ queryKey: ['records'], queryFn: listRecords });
   const [scope, setScope] = useState<Scope>('everything');
@@ -28,13 +32,15 @@ export function ShareCreate() {
   const [selectionError, setSelectionError] = useState(false);
   const records = query.data ?? [];
   const recordIds = scope === 'everything' ? records.filter(record => record.status === 'active').map(record => record.id) : scope === 'category' ? records.filter(record => record.type === type).map(record => record.id) : ids;
-  const mutation = useMutation({ mutationFn: (input: NewShareInput) => createShare(input), onSuccess: result => {
+  const mutation = useMutation({ mutationFn: (input: NewShareInput) => createShare(input), onSuccess: async result => {
     try { sessionStorage.setItem(`share-url:${result.id}`, result.url); } catch { /* Router state still carries the link. */ }
+    await client.invalidateQueries({ queryKey: ['shares'] });
     navigate(`/share/${result.id}`, { state: { url: result.url } });
   } });
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (!online) return;
     if (!recordIds.length) { setSelectionError(true); return; }
     setSelectionError(false);
     mutation.mutate({ label: name.trim() || share.defaultName, recordIds, minutes });
@@ -52,7 +58,8 @@ export function ShareCreate() {
       {selectionError && <p role="alert" className="text-sm text-danger">{share.chooseRecords}</p>}
       <label className="grid gap-1 text-sm text-ink-muted">{share.duration}<select className="min-h-12 rounded-sm border border-line bg-surface px-3 text-ink" value={minutes} onChange={event => setMinutes(Number(event.target.value) as ShareMinutes)}>{DURATIONS.map(value => <option key={value} value={value}>{share.durations[value]}</option>)}</select></label>
       {mutation.isError && <p role="alert" className="text-sm text-danger">{share.createError}</p>}
-      <Button type="submit" busy={mutation.isPending}>{share.create}</Button>
+      <Button type="submit" busy={mutation.isPending} disabled={!online}>{share.create}</Button>
+      <OfflineActionReason />
     </form>}
   </Screen>;
 }

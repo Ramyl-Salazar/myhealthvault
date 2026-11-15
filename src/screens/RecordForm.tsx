@@ -7,6 +7,8 @@ import type { CandidateRecord, HealthRecord, RecordDetails, RecordStatus, Record
 import { Button } from '../ui/Button';
 import { Field } from '../ui/Field';
 import { IconTile } from '../ui/IconTile';
+import { OfflineActionReason } from '../ui/OfflineBanner';
+import { useOnline } from '../ui/useOnline';
 
 const types: RecordType[] = ['diagnosis', 'allergy', 'medication', 'lab_result', 'immunization', 'procedure', 'visit'];
 type Values = Record<string, string>;
@@ -45,6 +47,7 @@ function detailsFor(type: RecordType, values: Values, extraResults: Values[]): R
 }
 
 export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumentId }: { initial?: CandidateRecord | HealthRecord; onSaved: (record: HealthRecord) => void; source?: 'manual' | 'scan'; resolveDocumentId?: () => Promise<string> }) {
+  const online = useOnline();
   const clientId = useRef(crypto.randomUUID());
   const before = initial && 'id' in initial ? initial : null;
   const [type, setType] = useState<RecordType>(initial?.type ?? 'diagnosis');
@@ -66,6 +69,7 @@ export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumen
   function field(key: string, label: string, inputType = 'text') { return <Field key={key} id={`${clientId.current}-${key}`} label={label} type={inputType} value={values[key] ?? ''} onChange={event => set(key, event.target.value)} />; }
   function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (!online) return;
     if (!candidate.title) { setTitleError(true); return; }
     setTitleError(false);
     mutation.mutate();
@@ -93,6 +97,7 @@ export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumen
     {field('notes', form.notes)}
     {willRemoveVerification && <p className="rounded-sm bg-patient-soft p-3 text-sm text-patient">{form.verificationWarning}</p>}
     {mutation.isError && <p role="alert" className="text-sm text-danger">{form.saveError}</p>}
-    <Button type="submit" busy={mutation.isPending}>{form.save}</Button>
+    <Button type="submit" busy={mutation.isPending} disabled={!online}>{form.save}</Button>
+    <OfflineActionReason />
   </form>;
 }
