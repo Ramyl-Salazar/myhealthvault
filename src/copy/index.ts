@@ -8,3 +8,5 @@ export { form } from './form';
 export { home } from './home';
 export { reminders } from './reminders';
 export { scan } from './scan';
+export { share } from './share';
+export { clinician } from './clinician';
