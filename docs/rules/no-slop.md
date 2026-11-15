@@ -13,6 +13,7 @@ The test is simple: would a careful designer and a careful writer, working by ha
 - The design direction is in `docs/design/direction.md` and its values are in `src/styles/tokens.css`.
 - Colour, type size, font, spacing and radius come only from those tokens. No hex values, pixel font sizes or one-off spacing in components.
 - One type pairing. One palette. One spacing scale. One radius scale. One icon set (`lucide-react`), one stroke width.
+- Record-type hues come only from the `--cat-*` tokens. Blue (`--color-primary`) is for actions and the active tab. Red is for allergies, destructive actions and the emergency card only.
 
 ### Banned
 
@@ -20,11 +21,13 @@ The test is simple: would a careful designer and a careful writer, working by ha
 - Gradient text.
 - Glass panels and background blur.
 - Emoji, anywhere, including as icons or bullets.
-- The same rounded, shadowed card for every piece of content. A list is a list; use rules and spacing before boxes.
+- A card around every single item. A card groups a set (a list of reminders, one summary group, one record being checked); rows inside it are separated by a hairline, not boxed again. No cards inside cards.
 - Everything centred. Text is left-aligned unless there is a reason.
 - Decorative illustrations, blobs, sparkles, stock hero sections.
-- Icons in coloured circles as section decoration.
-- Shadows stacked for effect. At most one elevation level, for things that float.
+- Icons as decoration. An icon tile is allowed only as an identifier: one icon and one hue per record type (see the direction), the same everywhere, in a soft tint. No tile on a heading that has no record type or action behind it.
+- Shadows stacked for effect. One soft card shadow (`--shadow-card`) and nothing heavier; in dark mode depth comes from the lighter surface, with no shadow.
+- Bright, saturated fills. Colour comes as soft tints with a darker icon or text of the same hue; only the primary button, the verified mark and the emergency header are solid.
+- Cartoon shapes, mascots, confetti, playful illustrations. Friendly here means clear and warm, not childlike.
 - Animation that does not explain a change of state. No entrance animations on page load.
 
 Banned class patterns (checked by script): `bg-gradient-to-`, `bg-linear-to-`, `from-purple-`, `from-indigo-`, `via-purple-`, `to-purple-`, `to-indigo-`, `backdrop-blur`, `bg-clip-text`.

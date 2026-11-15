@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prescription - San Rafael Medical Center</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1200px;
+      min-height: 1550px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      color: #1a1a1a;
+      font-family: Arial, Helvetica, sans-serif;
+      position: relative;
+      padding: 80px 96px;
+    }
+    .sample-stamp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-32deg);
+      font-size: 150px;
+      font-weight: 900;
+      color: rgba(220, 38, 38, 0.28);
+      border: 10px solid rgba(220, 38, 38, 0.32);
+      padding: 20px 80px;
+      letter-spacing: 20px;
+      text-transform: uppercase;
+      pointer-events: none;
+      border-radius: 12px;
+      user-select: none;
+      z-index: 100;
+    }
+    .header {
+      border-bottom: 2px solid #1a1a1a;
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+    .provider-name {
+      font-size: 36px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .header-sub {
+      font-size: 18px;
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+    .patient-box {
+      border: 1px solid #d1d5db;
+      background: #fdfdfd;
+      padding: 24px 32px;
+      margin-bottom: 48px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      row-gap: 16px;
+      column-gap: 24px;
+      font-size: 20px;
+    }
+    .patient-box div strong {
+      display: inline-block;
+      min-width: 130px;
+      color: #374151;
+    }
+    .rx-title {
+      font-size: 48px;
+      font-family: Georgia, serif;
+      font-weight: bold;
+      margin-bottom: 36px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 12px;
+    }
+    .medications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      margin-bottom: 80px;
+      padding-left: 20px;
+    }
+    .med-item {
+      font-size: 24px;
+      line-height: 1.5;
+    }
+    .med-name {
+      font-weight: bold;
+      font-size: 26px;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+    .med-sig {
+      font-size: 22px;
+      color: #374151;
+      margin-left: 16px;
+    }
+    .footer {
+      margin-top: 100px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .signature-block {
+      width: 400px;
+      text-align: center;
+      border-top: 2px solid #1a1a1a;
+      padding-top: 16px;
+      font-size: 22px;
+    }
+    .doctor-name {
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .doctor-role {
+      color: #4b5563;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sample-stamp">SAMPLE</div>
+
+  <div class="header">
+    <div class="provider-name">San Rafael Medical Center</div>
+    <div class="header-sub">Department of Internal Medicine | Outpatient Clinic</div>
+    <div class="header-sub">Prescription Form</div>
+  </div>
+
+  <div class="patient-box">
+    <div><strong>Patient:</strong> Lourdes Villareal</div>
+    <div><strong>DOB:</strong> 12 Mar 1968</div>
+    <div><strong>Sex:</strong> Female</div>
+    <div><strong>Date:</strong> 14 Nov 2026</div>
+  </div>
+
+  <div class="rx-title">&#8478;</div>
+
+  <div class="medications-list">
+    <div class="med-item">
+      <div class="med-name">1. Metformin 500 mg tablet</div>
+      <div class="med-sig">Sig: twice daily</div>
+    </div>
+    <div class="med-item">
+      <div class="med-name">2. Losartan 50 mg tablet</div>
+      <div class="med-sig">Sig: once daily</div>
+    </div>
+    <div class="med-item">
+      <div class="med-name">3. Atorvastatin 20 mg tablet</div>
+      <div class="med-sig">Sig: once daily at bedtime</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="signature-block">
+      <div class="doctor-name">Dr. Paolo Santiago</div>
+      <div class="doctor-role">Attending Physician</div>
+    </div>
+  </div>
+</body>
+</html>

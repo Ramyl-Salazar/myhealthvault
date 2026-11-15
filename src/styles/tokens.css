@@ -1,11 +1,88 @@
-/* Placeholder values until the design direction is approved.
-   Colours, type, spacing and radius come only from this file. */
+/* Design tokens. Source of truth for colour, type, spacing and radius.
+   Approved by the owner on 15 Nov 2026 (direction 2). See docs/design/direction.md. */
+@import '@fontsource-variable/atkinson-hyperlegible-next';
+@import '@fontsource/atkinson-hyperlegible-mono/400.css';
+
 :root {
-  --color-text: #1a1a1a;
+  --color-bg: #f2f5fa;
   --color-surface: #ffffff;
-  --font-body: system-ui, sans-serif;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-4: 1rem;
-  --radius-1: 0.25rem;
+  --color-ink: #17202e;
+  --color-ink-muted: #586374;
+  --color-line: #e2e7ef;
+
+  --color-primary: #2b5fd9;
+  --color-primary-soft: #e7eefd;
+  --color-on-primary: #ffffff;
+
+  --color-verified: #18794e;
+  --color-verified-soft: #e2f4ea;
+  --color-patient: #8a5a00;
+  --color-patient-soft: #fff3d9;
+  --color-danger: #bf3329;
+  --color-danger-soft: #fdebe9;
+
+  /* one hue per record type: icon colour and its soft tile */
+  --cat-medicine: #2b5fd9;   --cat-medicine-soft: #e7eefd;
+  --cat-condition: #b03268;  --cat-condition-soft: #fbe7f0;
+  --cat-result: #946000;     --cat-result-soft: #fff1d6;
+  --cat-visit: #0e7a82;      --cat-visit-soft: #dff4f5;
+  --cat-vaccine: #18794e;    --cat-vaccine-soft: #e2f4ea;
+  --cat-procedure: #5a4bb5;  --cat-procedure-soft: #ece9fb;
+  --cat-allergy: #bf3329;    --cat-allergy-soft: #fdebe9;
+
+  --shadow-card: 0 1px 2px rgba(23, 32, 46, 0.06), 0 6px 16px rgba(23, 32, 46, 0.05);
+
+  --font-sans: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
+
+  --text-xs: 13px;
+  --text-sm: 15px;
+  --text-base: 17px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 30px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0e1219;
+    --color-surface: #181e29;
+    --color-ink: #e9edf4;
+    --color-ink-muted: #9da8b8;
+    --color-line: #2a3241;
+
+    --color-primary: #86a8ff;
+    --color-primary-soft: #1c2a4c;
+    --color-on-primary: #0b1430;
+
+    --color-verified: #62d39c;
+    --color-verified-soft: #143326;
+    --color-patient: #efc163;
+    --color-patient-soft: #3a2e12;
+    --color-danger: #ff968c;
+    --color-danger-soft: #401d1a;
+
+    --cat-medicine: #86a8ff;   --cat-medicine-soft: #1c2a4c;
+    --cat-condition: #f291b9;  --cat-condition-soft: #3b1b2a;
+    --cat-result: #efc163;     --cat-result-soft: #3a2e12;
+    --cat-visit: #66d0d7;      --cat-visit-soft: #12343a;
+    --cat-vaccine: #62d39c;    --cat-vaccine-soft: #143326;
+    --cat-procedure: #ab9eff;  --cat-procedure-soft: #282349;
+    --cat-allergy: #ff968c;    --cat-allergy-soft: #401d1a;
+
+    --shadow-card: none;
+  }
 }

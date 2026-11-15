@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinician view mockup</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body class="mock-page">
+<main class="mhv" data-screen="Clinician view">
+  <div class="top">
+    <span class="small muted">MyHealthVault</span>
+    <span class="demo">Demo data</span>
+  </div>
+  <div class="body">
+    <h1>Health record shared by the patient</h1>
+
+    <div class="card who">
+      <div class="hello">
+        <span class="avatar">LV</span>
+        <div>
+          <h2>Lourdes Villareal</h2>
+          <p class="small muted">Chose what is shown here</p>
+        </div>
+      </div>
+      <div class="facts">
+        <span class="fact"><span class="num">58</span> years</span>
+        <span class="fact">Female</span>
+        <span class="fact">Blood type <span class="num">O+</span></span>
+      </div>
+      <p class="ends"><i data-i="clock"></i><span>This link ends <span class="num">15 Nov 2026, 15:40</span></span></p>
+    </div>
+
+    <section>
+      <h2>How to read the labels</h2>
+      <div class="key">
+        <span class="trust patient"><i data-i="pencil"></i>Entered by patient</span>
+        <span class="trust document"><i data-i="file"></i>Supported by a document</span>
+        <span class="trust clinician"><i data-i="check"></i>Verified by a clinician</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Allergies</h2>
+      <ul class="card rec">
+        <li>
+          <div class="line">
+            <span class="tile allergy"><i data-i="alert"></i></span>
+            <div><p class="title allergy-name">Penicillin</p><p class="small muted">Rash, moderate</p></div>
+            <span class="trust clinician"><i data-i="check"></i>Verified</span>
+          </div>
+          <p class="verified-by">Dr. A. Reyes, licence <span class="num">0098123</span>, <span class="num">12 Aug 2026</span></p>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Medicines</h2>
+      <ul class="card rec">
+        <li>
+          <div class="line">
+            <span class="tile medicine"><i data-i="pill"></i></span>
+            <div><p class="title">Metformin</p><p class="small muted"><span class="num">500 mg</span>, twice daily</p></div>
+            <span class="trust document"><i data-i="file"></i>Document</span>
+          </div>
+          <button class="btn soft sm"><i data-i="check"></i>Mark as verified</button>
+        </li>
+        <li>
+          <div class="line">
+            <span class="tile medicine"><i data-i="pill"></i></span>
+            <div><p class="title">Glucophage</p><p class="small muted"><span class="num">500 mg</span>, twice daily</p></div>
+            <span class="trust patient"><i data-i="pencil"></i>Patient</span>
+          </div>
+          <button class="btn soft sm"><i data-i="check"></i>Mark as verified</button>
+        </li>
+      </ul>
+    </section>
+
+    <p class="caution">Demo only: the licence number is not checked.</p>
+  </div>
+</main>
+<script src="mock.js"></script>
+</body>
+</html>

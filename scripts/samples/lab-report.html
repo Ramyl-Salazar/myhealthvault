@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Laboratory Report - Lakandula Diagnostics</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1200px;
+      min-height: 1550px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      color: #1a1a1a;
+      font-family: Arial, Helvetica, sans-serif;
+      position: relative;
+      padding: 80px 96px;
+    }
+    .sample-stamp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-32deg);
+      font-size: 150px;
+      font-weight: 900;
+      color: rgba(220, 38, 38, 0.28);
+      border: 10px solid rgba(220, 38, 38, 0.32);
+      padding: 20px 80px;
+      letter-spacing: 20px;
+      text-transform: uppercase;
+      pointer-events: none;
+      border-radius: 12px;
+      user-select: none;
+      z-index: 100;
+    }
+    .header {
+      border-bottom: 2px solid #1a1a1a;
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+    .provider-name {
+      font-size: 36px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .header-sub {
+      font-size: 18px;
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+    .patient-box {
+      border: 1px solid #d1d5db;
+      background: #fdfdfd;
+      padding: 24px 32px;
+      margin-bottom: 48px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      row-gap: 16px;
+      column-gap: 24px;
+      font-size: 20px;
+    }
+    .patient-box div strong {
+      display: inline-block;
+      min-width: 130px;
+      color: #374151;
+    }
+    .section-title {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #9ca3af;
+      padding-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 22px;
+      margin-bottom: 60px;
+    }
+    th, td {
+      text-align: left;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    th {
+      background-color: #f3f4f6;
+      font-weight: bold;
+      color: #1f2937;
+      border-bottom: 2px solid #9ca3af;
+    }
+    td.result-val {
+      font-weight: bold;
+      color: #111827;
+      font-variant-numeric: tabular-nums;
+    }
+    td.unit-val, td.ref-val {
+      color: #374151;
+      font-variant-numeric: tabular-nums;
+    }
+    .footer {
+      margin-top: 100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .footer-note {
+      font-size: 16px;
+      color: #6b7280;
+      max-width: 500px;
+    }
+    .signature-block {
+      width: 360px;
+      text-align: center;
+      border-top: 2px solid #1a1a1a;
+      padding-top: 16px;
+      font-size: 20px;
+    }
+    .signatory-name {
+      font-weight: bold;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .signatory-title {
+      color: #4b5563;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sample-stamp">SAMPLE</div>
+
+  <div class="header">
+    <div class="provider-name">Lakandula Diagnostics</div>
+    <div class="header-sub">Clinical Laboratory Services</div>
+    <div class="header-sub">Official Diagnostic Report</div>
+  </div>
+
+  <div class="patient-box">
+    <div><strong>Patient:</strong> Lourdes Villareal</div>
+    <div><strong>DOB:</strong> 12 Mar 1968</div>
+    <div><strong>Sex:</strong> Female</div>
+    <div><strong>Date:</strong> 02 Oct 2026</div>
+  </div>
+
+  <div class="section-title">Blood Chemistry</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 38%;">Test</th>
+        <th style="width: 20%;">Result</th>
+        <th style="width: 20%;">Unit</th>
+        <th style="width: 22%;">Reference Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>HbA1c</td>
+        <td class="result-val">7.2</td>
+        <td class="unit-val">%</td>
+        <td class="ref-val">4.0-5.6</td>
+      </tr>
+      <tr>
+        <td>Fasting blood sugar</td>
+        <td class="result-val">138</td>
+        <td class="unit-val">mg/dL</td>
+        <td class="ref-val">70-99</td>
+      </tr>
+      <tr>
+        <td>Total cholesterol</td>
+        <td class="result-val">212</td>
+        <td class="unit-val">mg/dL</td>
+        <td class="ref-val">below 200</td>
+      </tr>
+      <tr>
+        <td>Creatinine</td>
+        <td class="result-val">0.9</td>
+        <td class="unit-val">mg/dL</td>
+        <td class="ref-val">0.6-1.1</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div class="footer-note">
+      Results verified electronically by laboratory information system.
+    </div>
+    <div class="signature-block">
+      <div class="signatory-name">Maria Santos, RMT</div>
+      <div class="signatory-title">Medical Technologist</div>
+    </div>
+  </div>
+</body>
+</html>

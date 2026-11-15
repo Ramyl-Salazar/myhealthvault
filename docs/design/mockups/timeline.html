@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timeline mockup</title>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body class="mock-page">
+<main class="mhv" data-screen="Timeline">
+  <div class="top">
+    <h1>Timeline</h1>
+    <span class="demo">Demo data</span>
+  </div>
+  <div class="body">
+    <div class="chips" role="group" aria-label="Show">
+      <button class="chip on">All</button>
+      <button class="chip">Medicines</button>
+      <button class="chip">Results</button>
+      <button class="chip">Visits</button>
+      <button class="chip">Conditions</button>
+    </div>
+
+    <section>
+      <p class="year num">2026</p>
+      <ol class="card tl">
+        <li>
+          <span class="tile medicine"><i data-i="pill"></i></span>
+          <div>
+            <p class="title">Glucophage <span class="num">500 mg</span>, twice daily</p>
+            <p class="date"><span class="num">05 Nov 2026</span></p>
+            <div class="meta"><span class="trust patient"><i data-i="pencil"></i>Entered by patient</span></div>
+          </div>
+        </li>
+        <li>
+          <span class="tile visit"><i data-i="stethoscope"></i></span>
+          <div>
+            <p class="title">Diabetes check-up</p>
+            <p class="date"><span class="num">26 Oct 2026</span>, San Rafael Medical Center</p>
+            <p class="small muted">Follow-up <span class="num">25 Nov 2026</span></p>
+            <div class="meta"><span class="trust patient"><i data-i="pencil"></i>Entered by patient</span></div>
+          </div>
+        </li>
+        <li>
+          <span class="tile medicine"><i data-i="pill"></i></span>
+          <div>
+            <p class="title">Losartan <span class="num">50 mg</span>, once daily</p>
+            <p class="date"><span class="num">26 Oct 2026</span>, San Rafael Medical Center</p>
+            <p class="small muted">Ends <span class="num">20 Nov 2026</span></p>
+            <div class="meta"><span class="trust document"><i data-i="file"></i>Supported by a document</span></div>
+          </div>
+        </li>
+        <li>
+          <span class="tile result"><i data-i="flask"></i></span>
+          <div>
+            <p class="title">HbA1c <span class="num">7.2 %</span></p>
+            <p class="date"><span class="num">02 Oct 2026</span>, Lakandula Diagnostics</p>
+            <p class="small muted">Reference range <span class="num">4.0-5.6 %</span></p>
+            <div class="meta"><span class="trust document"><i data-i="file"></i>Supported by a document</span></div>
+          </div>
+        </li>
+        <li>
+          <span class="tile vaccine"><i data-i="syringe"></i></span>
+          <div>
+            <p class="title">Influenza vaccine</p>
+            <p class="date"><span class="num">14 Jul 2026</span>, Barangay Malaya Health Center</p>
+            <div class="meta"><span class="trust clinician"><i data-i="check"></i>Verified by a clinician</span></div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <p class="year num">2024</p>
+      <ol class="card tl">
+        <li>
+          <span class="tile procedure"><i data-i="scissors"></i></span>
+          <div>
+            <p class="title">Cataract surgery, right eye</p>
+            <p class="date"><span class="num">09 Mar 2024</span>, San Rafael Medical Center</p>
+            <div class="meta"><span class="trust document"><i data-i="file"></i>Supported by a document</span></div>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </div>
+  <nav class="nav" aria-label="Main">
+    <a href="#"><span class="ic"><i data-i="home"></i></span>Home</a>
+    <a class="on" href="#"><span class="ic"><i data-i="clock"></i></span>Timeline</a>
+    <a class="add" href="#"><span class="ic"><i data-i="plus"></i></span>Add</a>
+    <a href="#"><span class="ic"><i data-i="share"></i></span>Share</a>
+    <a href="#"><span class="ic"><i data-i="sliders"></i></span>Settings</a>
+  </nav>
+</main>
+<script src="mock.js"></script>
+</body>
+</html>
