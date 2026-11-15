@@ -1,8 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { screens } from './copy';
-import { Placeholder } from './screens/Placeholder';
 import { EmergencyCard } from './screens/EmergencyCard';
 import { PinGate } from './screens/PinLock';
 import { ErrorState } from './ui/ErrorState';
@@ -21,6 +19,8 @@ const ShareCreate = lazy(() => import('./screens/ShareCreate').then(module => ({
 const ShareDetail = lazy(() => import('./screens/ShareDetail').then(module => ({ default: module.ShareDetail })));
 const ClinicianView = lazy(() => import('./screens/ClinicianView').then(module => ({ default: module.ClinicianView })));
 const EmergencySync = lazy(() => import('./screens/EmergencySync').then(module => ({ default: module.EmergencySync })));
+const Settings = lazy(() => import('./screens/Settings').then(module => ({ default: module.Settings })));
+const PrintSummary = lazy(() => import('./screens/PrintSummary').then(module => ({ default: module.PrintSummary })));
 const loading = <div className="app-column mx-auto p-4"><Skeleton /></div>;
 
 function NeedsSession({ children }: { children: ReactNode }) {
@@ -57,8 +57,8 @@ export default function App() {
     <Route path="/share" element={<NeedsSession><Suspense fallback={loading}><ShareList /></Suspense></NeedsSession>} />
     <Route path="/share/new" element={<NeedsSession><Suspense fallback={loading}><ShareCreate /></Suspense></NeedsSession>} />
     <Route path="/share/:id" element={<NeedsSession><Suspense fallback={loading}><ShareDetail /></Suspense></NeedsSession>} />
-    <Route path="/settings" element={<NeedsSession><Placeholder title={screens.settings} /></NeedsSession>} />
-    <Route path="/print" element={<NeedsSession><Placeholder title={screens.print} /></NeedsSession>} />
+    <Route path="/settings" element={<NeedsSession><Suspense fallback={loading}><Settings /></Suspense></NeedsSession>} />
+    <Route path="/print" element={<NeedsSession><Suspense fallback={loading}><PrintSummary /></Suspense></NeedsSession>} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></PinGate>;
 }

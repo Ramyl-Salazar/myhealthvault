@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Camera, QrCode, ShieldAlert } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { common, home, reminders, screens } from '../copy';
 import { getProfile } from '../data/profile';
 import { listRecords } from '../data/records';
+import { syncNotifications } from '../data/notifications';
 import { dismissReminder, listDismissed } from '../data/reminders';
 import { formatDate } from '../domain/dates';
 import { computeReminders } from '../domain/reminders';
@@ -45,6 +46,7 @@ export function Home() {
   const summary = buildSummary(allRecords);
   const dismissed = new Set([...(dismissedQuery.data ?? new Set<string>()), ...locallyDismissed]);
   const visibleReminders = computeReminders(allRecords, today, dismissed);
+  useEffect(() => { if (!pending && !failed) void syncNotifications(visibleReminders).catch(() => undefined); }, [pending, failed, visibleReminders.map(reminder => reminder.key).join('|')]);
 
   return <Screen title={pending || failed ? screens.home : home.greeting(name)} headerLeading={!pending && !failed ? <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-on-primary">{initials}</span> : undefined} subtitle={!pending && !failed ? formatDate(today) : undefined}>
     {pending ? <Skeleton /> : failed ? <ErrorState message={home.loadError} onRetry={() => { void recordsQuery.refetch(); void profileQuery.refetch(); void dismissedQuery.refetch(); }} /> : <>
