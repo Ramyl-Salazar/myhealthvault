@@ -10,7 +10,7 @@ export const MAX_NAME_LENGTH = 200;
 export const MAX_LICENSE_LENGTH = 100;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const CONTROL = /[\u0000-\u001f\u007f]/;
+const CONTROL = /[\u0000-\u001f\u007f]|\p{Cf}/u;
 
 type Row = Record<string, unknown>;
 

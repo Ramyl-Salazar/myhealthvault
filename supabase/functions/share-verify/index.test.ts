@@ -100,7 +100,9 @@ describe('share-verify handler', () => {
     const handler = handlerFor(w);
     const bad = [
       { ...valid, clinicianName: '   ' },
-      { ...valid, licenseNumber: '\t' },
+      { ...valid, licenseNumber: '	' },
+      { ...valid, clinicianName: '200B' },
+      { ...valid, clinicianName: 'Dr. 202EAbc' },
       { ...valid, clinicianName: 'x'.repeat(MAX_NAME_LENGTH + 1) },
       { ...valid, licenseNumber: '9'.repeat(MAX_LICENSE_LENGTH + 1) },
     ];
