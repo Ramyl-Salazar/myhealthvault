@@ -35,6 +35,14 @@ describe('possible_duplicate', () => {
     expect(rs).toHaveLength(1);
     expect(rs[0].recordIds).toEqual(['metformin', 'glucophage', 'third']);
   });
+  it('falls back to the title when genericName is empty or whitespace', () => {
+    const blank = makeMedication('Glucophage 500 mg', { genericName: '' }, { id: 'blank' });
+    const spaces = makeMedication('Glucophage 500 mg', { genericName: '   ' }, { id: 'spaces' });
+    const rs = computeReminders([blank, metformin], today, new Set());
+    expect(keys(rs)).toEqual(['dup:metformin']);
+    expect(rs[0].recordIds).toEqual(['blank', 'metformin']);
+    expect(keys(computeReminders([spaces, metformin], today, new Set()))).toEqual(['dup:metformin']);
+  });
   it('does not flag a single medication', () => {
     expect(computeReminders([metformin], today, new Set())).toHaveLength(0);
   });

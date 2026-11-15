@@ -37,6 +37,44 @@ describe('trustAfterEdit', () => {
     const doc = makeRecord({ trustLevel: 'document_supported' });
     expect(trustAfterEdit(doc, { ...doc, title: 'other' })).toBe('patient_entered');
   });
+  it('keeps the level when details have the same values in a different key order', () => {
+    const med = makeRecord({
+      type: 'medication',
+      trustLevel: 'clinician_verified',
+      details: { kind: 'medication', genericName: 'Metformin', dose: '500 mg', frequency: null, startOn: null, endOn: null },
+    });
+    const reordered = {
+      endOn: null, startOn: null, frequency: null, dose: '500 mg', genericName: 'Metformin', kind: 'medication',
+    } as const;
+    expect(trustAfterEdit(med, { ...med, details: reordered })).toBe('clinician_verified');
+  });
+  it('treats undefined and null as the same for a field', () => {
+    const med = makeRecord({
+      type: 'medication',
+      trustLevel: 'clinician_verified',
+      details: { kind: 'medication', genericName: 'Metformin', dose: null, frequency: null, startOn: null, endOn: null },
+    });
+    const details = { kind: 'medication', genericName: 'Metformin', dose: undefined, frequency: null, startOn: null } as unknown as typeof med.details;
+    expect(trustAfterEdit(med, { ...med, details })).toBe('clinician_verified');
+  });
+  it('drops to patient_entered when one lab value changes', () => {
+    const a = { name: 'HbA1c', value: '6.1', unit: '%', referenceRange: null };
+    const lab = makeRecord({ type: 'lab_result', trustLevel: 'clinician_verified', details: { kind: 'lab_result', results: [a] } });
+    const changed = { kind: 'lab_result', results: [{ ...a, value: '6.2' }] } as const;
+    expect(trustAfterEdit(lab, { ...lab, details: changed })).toBe('patient_entered');
+  });
+  it('drops to patient_entered when lab results are swapped in order', () => {
+    const a = { name: 'HbA1c', value: '6.1', unit: '%', referenceRange: null };
+    const b = { name: 'FBS', value: '5.4', unit: 'mmol/L', referenceRange: null };
+    const lab = makeRecord({ type: 'lab_result', trustLevel: 'clinician_verified', details: { kind: 'lab_result', results: [a, b] } });
+    expect(trustAfterEdit(lab, { ...lab, details: { kind: 'lab_result', results: [b, a] } })).toBe('patient_entered');
+  });
+  it('keeps the level when lab result keys are reordered', () => {
+    const a = { name: 'HbA1c', value: '6.1', unit: '%', referenceRange: null };
+    const lab = makeRecord({ type: 'lab_result', trustLevel: 'clinician_verified', details: { kind: 'lab_result', results: [a] } });
+    const flipped = { referenceRange: null, unit: '%', value: '6.1', name: 'HbA1c' };
+    expect(trustAfterEdit(lab, { ...lab, details: { results: [flipped], kind: 'lab_result' } })).toBe('clinician_verified');
+  });
   it('treats equal nested details as unchanged', () => {
     const lab = makeRecord({
       type: 'lab_result',

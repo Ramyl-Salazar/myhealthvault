@@ -32,8 +32,8 @@ export function computeReminders(records: HealthRecord[], today: string, dismiss
   const byGeneric = new Map<string, string[]>();
   for (const record of records) {
     if (record.type !== 'medication' || record.status !== 'active') continue;
-    const name = (record.details.kind === 'medication' ? record.details.genericName : null) ?? record.title;
-    const generic = toGeneric(name);
+    const given = record.details.kind === 'medication' ? record.details.genericName : null;
+    const generic = toGeneric(given && given.trim() !== '' ? given : record.title);
     if (generic === '') continue;
     byGeneric.set(generic, [...(byGeneric.get(generic) ?? []), record.id]);
   }
