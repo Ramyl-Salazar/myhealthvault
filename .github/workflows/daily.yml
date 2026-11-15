@@ -1,0 +1,29 @@
+name: Daily cleanup
+
+# Deletes anonymous demo accounts older than 7 days (docs/contracts/cleanup.md).
+# The daily call also keeps the free Supabase project from pausing.
+on:
+  schedule:
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: daily-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call the cleanup function
+        env:
+          FUNCTIONS_URL: ${{ secrets.SUPABASE_FUNCTIONS_URL }}
+          CLEANUP_SECRET: ${{ secrets.CLEANUP_SECRET }}
+          PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          curl -fsS --max-time 120 -X POST "$FUNCTIONS_URL/cleanup" \
+            -H "x-cleanup-secret: $CLEANUP_SECRET" \
+            -H "apikey: $PUBLISHABLE_KEY"

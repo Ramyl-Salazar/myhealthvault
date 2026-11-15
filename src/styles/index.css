@@ -62,3 +62,8 @@ button:disabled { cursor: default; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+@media print {
+  @page { size: A4; margin: 16mm; }
+  .print-controls { display: none !important; }
+  .print-summary { max-width: none; min-height: 0; padding: 0; background: white !important; color: black !important; }
+}
