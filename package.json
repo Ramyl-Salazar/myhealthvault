@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
     "test:e2e": "playwright test --pass-with-no-tests",
-    "check:slop": "node scripts/check-slop.mjs"
+    "check:slop": "node scripts/check-slop.mjs",
+    "make:samples": "node scripts/make-samples.mjs"
   },
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
