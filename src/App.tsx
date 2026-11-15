@@ -11,6 +11,7 @@ const Timeline = lazy(() => import('./screens/Timeline').then(module => ({ defau
 const RecordDetail = lazy(() => import('./screens/RecordDetail').then(module => ({ default: module.RecordDetail })));
 const AddRecord = lazy(() => import('./screens/AddRecord').then(module => ({ default: module.AddRecord })));
 const EditRecord = lazy(() => import('./screens/AddRecord').then(module => ({ default: module.EditRecord })));
+const Home = lazy(() => import('./screens/Home').then(module => ({ default: module.Home })));
 const loading = <div className="app-column mx-auto p-4"><Skeleton /></div>;
 
 function NeedsSession({ children }: { children: ReactNode }) {
@@ -37,7 +38,7 @@ export default function App() {
     <Route path="/" element={<Suspense fallback={<div className="app-column mx-auto p-4"><Skeleton /></div>}><DemoEntry /></Suspense>} />
     <Route path="/s/:token" element={<Placeholder title={screens.shared} nav={false} />} />
     <Route path="/emergency" element={<Placeholder title={screens.emergency} nav={false} />} />
-    <Route path="/home" element={<NeedsSession><Placeholder title={screens.home} /></NeedsSession>} />
+    <Route path="/home" element={<NeedsSession><Suspense fallback={loading}><Home /></Suspense></NeedsSession>} />
     <Route path="/timeline" element={<NeedsSession><Suspense fallback={loading}><Timeline /></Suspense></NeedsSession>} />
     <Route path="/add" element={<NeedsSession><Suspense fallback={loading}><AddRecord /></Suspense></NeedsSession>} />
     <Route path="/records/:id" element={<NeedsSession><Suspense fallback={loading}><RecordDetail /></Suspense></NeedsSession>} />

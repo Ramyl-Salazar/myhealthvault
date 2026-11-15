@@ -5,3 +5,5 @@ export { screens, entry } from './screens';
 export { timeline } from './timeline';
 export { records } from './records';
 export { form } from './form';
+export { home } from './home';
+export { reminders } from './reminders';
