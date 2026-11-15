@@ -7,3 +7,4 @@ export { records } from './records';
 export { form } from './form';
 export { home } from './home';
 export { reminders } from './reminders';
+export { scan } from './scan';

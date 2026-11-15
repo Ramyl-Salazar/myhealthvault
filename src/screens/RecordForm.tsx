@@ -44,7 +44,7 @@ function detailsFor(type: RecordType, values: Values, extraResults: Values[]): R
   }
 }
 
-export function RecordForm({ initial, onSaved }: { initial?: CandidateRecord | HealthRecord; onSaved: (record: HealthRecord) => void }) {
+export function RecordForm({ initial, onSaved, source = 'manual', resolveDocumentId }: { initial?: CandidateRecord | HealthRecord; onSaved: (record: HealthRecord) => void; source?: 'manual' | 'scan'; resolveDocumentId?: () => Promise<string> }) {
   const clientId = useRef(crypto.randomUUID());
   const before = initial && 'id' in initial ? initial : null;
   const [type, setType] = useState<RecordType>(initial?.type ?? 'diagnosis');
@@ -58,7 +58,7 @@ export function RecordForm({ initial, onSaved }: { initial?: CandidateRecord | H
   const candidate: CandidateRecord = { type, title: values.title.trim(), occurredOn: values.occurredOn || null, providerName: values.providerName.trim() || null, details };
   const willRemoveVerification = before?.trustLevel === 'clinician_verified' && trustAfterEdit(before, { title: candidate.title, occurredOn: candidate.occurredOn, details, status }) === 'patient_entered';
   const mutation = useMutation({
-    mutationFn: () => before ? updateRecord(before, { title: candidate.title, occurredOn: candidate.occurredOn, providerName: candidate.providerName, details, notes: values.notes.trim() || null, status }) : createRecord({ ...candidate, notes: values.notes.trim() || null, status, source: 'manual', documentId: null, clientId: clientId.current }),
+    mutationFn: async () => before ? updateRecord(before, { title: candidate.title, occurredOn: candidate.occurredOn, providerName: candidate.providerName, details, notes: values.notes.trim() || null, status }) : createRecord({ ...candidate, notes: values.notes.trim() || null, status, source, documentId: resolveDocumentId ? await resolveDocumentId() : null, clientId: clientId.current }),
     onSuccess: async record => { await client.invalidateQueries({ queryKey: ['records'] }); onSaved(record); },
   });
 
