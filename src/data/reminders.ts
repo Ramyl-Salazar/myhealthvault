@@ -2,7 +2,7 @@ import { check, supabase } from './supabase';
 
 export async function dismissReminder(key: string): Promise<void> {
   check(
-    await supabase.from('reminder_dismissals').upsert({ reminder_key: key }, { onConflict: 'user_id,reminder_key' }),
+    await supabase.from('reminder_dismissals').upsert({ reminder_key: key }, { onConflict: 'user_id,reminder_key', ignoreDuplicates: true }),
     'Could not dismiss the reminder',
   );
 }

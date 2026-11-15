@@ -82,7 +82,7 @@ describe('createRecord', () => {
 
   it('throws a plain Error when Supabase fails', async () => {
     failWith = 'boom';
-    await expect(createRecord(input)).rejects.toThrow(Error);
+    await expect(createRecord(input)).rejects.toThrow('Could not save the record: boom');
   });
 });
 
