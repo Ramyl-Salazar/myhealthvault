@@ -14,6 +14,9 @@ const EditRecord = lazy(() => import('./screens/AddRecord').then(module => ({ de
 const Home = lazy(() => import('./screens/Home').then(module => ({ default: module.Home })));
 const ScanCapture = lazy(() => import('./screens/ScanCapture').then(module => ({ default: module.ScanCapture })));
 const ScanConfirm = lazy(() => import('./screens/ScanConfirm').then(module => ({ default: module.ScanConfirm })));
+const ShareList = lazy(() => import('./screens/ShareList').then(module => ({ default: module.ShareList })));
+const ShareCreate = lazy(() => import('./screens/ShareCreate').then(module => ({ default: module.ShareCreate })));
+const ShareDetail = lazy(() => import('./screens/ShareDetail').then(module => ({ default: module.ShareDetail })));
 const loading = <div className="app-column mx-auto p-4"><Skeleton /></div>;
 
 function NeedsSession({ children }: { children: ReactNode }) {
@@ -47,9 +50,9 @@ export default function App() {
     <Route path="/records/:id/edit" element={<NeedsSession><Suspense fallback={loading}><EditRecord /></Suspense></NeedsSession>} />
     <Route path="/scan" element={<NeedsSession><Suspense fallback={loading}><ScanCapture /></Suspense></NeedsSession>} />
     <Route path="/scan/confirm" element={<NeedsSession><Suspense fallback={loading}><ScanConfirm /></Suspense></NeedsSession>} />
-    <Route path="/share" element={<NeedsSession><Placeholder title={screens.share} /></NeedsSession>} />
-    <Route path="/share/new" element={<NeedsSession><Placeholder title={screens.shareNew} /></NeedsSession>} />
-    <Route path="/share/:id" element={<NeedsSession><Placeholder title={screens.shareDetail} /></NeedsSession>} />
+    <Route path="/share" element={<NeedsSession><Suspense fallback={loading}><ShareList /></Suspense></NeedsSession>} />
+    <Route path="/share/new" element={<NeedsSession><Suspense fallback={loading}><ShareCreate /></Suspense></NeedsSession>} />
+    <Route path="/share/:id" element={<NeedsSession><Suspense fallback={loading}><ShareDetail /></Suspense></NeedsSession>} />
     <Route path="/settings" element={<NeedsSession><Placeholder title={screens.settings} /></NeedsSession>} />
     <Route path="/print" element={<NeedsSession><Placeholder title={screens.print} /></NeedsSession>} />
     <Route path="*" element={<Navigate to="/" replace />} />
