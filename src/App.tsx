@@ -5,6 +5,7 @@ import { EmergencyCard } from './screens/EmergencyCard';
 import { PinGate } from './screens/PinLock';
 import { ErrorState } from './ui/ErrorState';
 import { Skeleton } from './ui/Skeleton';
+import { OfflineBanner } from './ui/OfflineBanner';
 
 const DemoEntry = lazy(() => import('./screens/DemoEntry').then(module => ({ default: module.DemoEntry })));
 const Timeline = lazy(() => import('./screens/Timeline').then(module => ({ default: module.Timeline })));
@@ -39,7 +40,7 @@ function NeedsSession({ children }: { children: ReactNode }) {
   if (state === 'loading') return <div className="app-column mx-auto p-4"><Skeleton /></div>;
   if (state === 'error') return <div className="app-column mx-auto p-4"><ErrorState onRetry={retry} /></div>;
   if (state === 'absent') return <Navigate to="/" replace />;
-  return <><Suspense fallback={null}><EmergencySync /></Suspense>{children}</>;
+  return <><OfflineBanner /><Suspense fallback={null}><EmergencySync /></Suspense>{children}</>;
 }
 
 export default function App() {

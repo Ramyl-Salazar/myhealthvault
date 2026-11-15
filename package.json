@@ -10,8 +10,9 @@
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
     "test:e2e": "playwright test --pass-with-no-tests",
-    "check:slop": "node scripts/check-slop.mjs",
-    "make:samples": "node scripts/make-samples.mjs"
+    "check:slop": "node scripts/check-slop.mjs src README.md",
+    "make:samples": "node scripts/make-samples.mjs",
+    "build:android": "node scripts/build-android.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",
@@ -30,6 +31,8 @@
     "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
     "@playwright/test": "^1.65.1",
     "@tailwindcss/vite": "^4.3.5",
     "@testing-library/jest-dom": "^7.0.1",
@@ -45,6 +48,7 @@
     "typescript": "^7.0.2",
     "typescript-api": "npm:typescript@^5.9.3",
     "vite": "^8.3.8",
+    "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.1.0"
   }
 }

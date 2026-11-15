@@ -7,14 +7,17 @@ import { needsHelp, parseDocumentText } from '../domain/extract/parse';
 import { SAMPLES } from '../domain/extract/samples';
 import { Button } from '../ui/Button';
 import { Screen } from '../ui/Screen';
+import { OfflineActionReason } from '../ui/OfflineBanner';
+import { useOnline } from '../ui/useOnline';
 import type { ScanState } from './ScanConfirm';
 
 export function ScanCapture() {
+  const online = useOnline();
   const navigate = useNavigate();
   const [reading, setReading] = useState(false);
 
   async function readFile(file?: File) {
-    if (!file) return;
+    if (!file || !online) return;
     setReading(true);
     let image: Blob = file;
     let candidates: ScanState['candidates'] = [];
@@ -35,12 +38,13 @@ export function ScanCapture() {
   return <Screen title={screens.scan}>
     <p className="rounded-sm border border-line bg-surface p-4 text-sm text-ink">{scan.notice}</p>
     <div className="grid gap-3">
-      <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-pill bg-primary px-4 font-semibold text-on-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">{scan.takePhoto}<input className="sr-only" aria-label={scan.takePhoto} type="file" accept="image/*" capture="environment" disabled={reading} onChange={event => void readFile(event.target.files?.[0])} /></label>
-      <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-pill bg-primary-soft px-4 font-semibold text-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">{scan.choosePhoto}<input className="sr-only" aria-label={scan.choosePhoto} type="file" accept="image/*" disabled={reading} onChange={event => void readFile(event.target.files?.[0])} /></label>
+      <label className={`flex min-h-12 items-center justify-center rounded-pill bg-primary px-4 font-semibold text-on-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary ${online ? 'cursor-pointer' : 'opacity-60'}`}>{scan.takePhoto}<input className="sr-only" aria-label={scan.takePhoto} type="file" accept="image/*" capture="environment" disabled={reading || !online} onChange={event => void readFile(event.target.files?.[0])} /></label>
+      <label className={`flex min-h-12 items-center justify-center rounded-pill bg-primary-soft px-4 font-semibold text-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary ${online ? 'cursor-pointer' : 'opacity-60'}`}>{scan.choosePhoto}<input className="sr-only" aria-label={scan.choosePhoto} type="file" accept="image/*" disabled={reading || !online} onChange={event => void readFile(event.target.files?.[0])} /></label>
     </div>
+    <OfflineActionReason />
     {reading && <p role="status" className="rounded-sm bg-surface p-4 text-ink">{scan.reading}</p>}
     <section className="grid gap-3"><h2 className="text-lg font-bold">{scan.samples}</h2>
-      {SAMPLES.map(sample => <Button key={sample.id} type="button" variant="soft" disabled={reading} onClick={() => navigate('/scan/confirm', { state: { sampleId: sample.id, imagePath: sample.imagePath, candidates: sample.candidates, help: false } satisfies ScanState })}>{scan.sampleNames[sample.id]}</Button>)}
+      {SAMPLES.map(sample => <Button key={sample.id} type="button" variant="soft" disabled={reading || !online} onClick={() => navigate('/scan/confirm', { state: { sampleId: sample.id, imagePath: sample.imagePath, candidates: sample.candidates, help: false } satisfies ScanState })}>{scan.sampleNames[sample.id]}</Button>)}
     </section>
   </Screen>;
 }

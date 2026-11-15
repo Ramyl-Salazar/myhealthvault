@@ -13,6 +13,8 @@ import { IconTile } from '../ui/IconTile';
 import { Screen } from '../ui/Screen';
 import { Skeleton } from '../ui/Skeleton';
 import { TrustBadge } from '../ui/TrustBadge';
+import { OfflineActionReason } from '../ui/OfflineBanner';
+import { useOnline } from '../ui/useOnline';
 
 function Value({ label, value }: { label: string; value: string | null | undefined }) {
   if (!value) return null;
@@ -43,13 +45,15 @@ function LinkedDocument({ record }: { record: HealthRecord }) {
 }
 
 export function RecordDetail() {
+  const online = useOnline();
   const { id } = useParams();
   const navigate = useNavigate();
   const client = useQueryClient();
-  const query = useQuery({ queryKey: ['record', id], queryFn: () => getRecord(id as string), enabled: Boolean(id) });
+  const query = useQuery({ queryKey: ['record', id], queryFn: () => getRecord(id as string), enabled: Boolean(id), refetchOnMount: 'always', refetchInterval: online ? 5000 : false });
   const deletion = useMutation({ mutationFn: () => deleteRecord(id as string), onSuccess: async () => { await client.invalidateQueries({ queryKey: ['records'] }); navigate('/timeline', { replace: true }); } });
 
   function remove() {
+    if (!online) return;
     if (window.confirm(records.confirmDelete)) deletion.mutate();
   }
 
@@ -64,7 +68,8 @@ export function RecordDetail() {
       </section>
       <LinkedDocument record={record} />
       {deletion.isError && <ErrorState message={records.deleteError} onRetry={remove} />}
-      <div className="flex gap-2"><Link to={`/records/${record.id}/edit`} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-pill bg-primary-soft px-4 font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{records.edit}</Link><Button type="button" variant="quiet" size="sm" busy={deletion.isPending} onClick={remove} className="flex-1 text-danger">{records.delete}</Button></div>
+      <div className="flex gap-2"><Link to={`/records/${record.id}/edit`} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-pill bg-primary-soft px-4 font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{records.edit}</Link><Button type="button" variant="quiet" size="sm" busy={deletion.isPending} disabled={!online} onClick={remove} className="flex-1 text-danger">{records.delete}</Button></div>
+      <OfflineActionReason />
     </>}
   </Screen>;
 }
