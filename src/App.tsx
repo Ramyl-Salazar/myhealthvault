@@ -7,6 +7,12 @@ import { ErrorState } from './ui/ErrorState';
 import { Skeleton } from './ui/Skeleton';
 
 const DemoEntry = lazy(() => import('./screens/DemoEntry').then(module => ({ default: module.DemoEntry })));
+const Timeline = lazy(() => import('./screens/Timeline').then(module => ({ default: module.Timeline })));
+const RecordDetail = lazy(() => import('./screens/RecordDetail').then(module => ({ default: module.RecordDetail })));
+const AddRecord = lazy(() => import('./screens/AddRecord').then(module => ({ default: module.AddRecord })));
+const EditRecord = lazy(() => import('./screens/AddRecord').then(module => ({ default: module.EditRecord })));
+const Home = lazy(() => import('./screens/Home').then(module => ({ default: module.Home })));
+const loading = <div className="app-column mx-auto p-4"><Skeleton /></div>;
 
 function NeedsSession({ children }: { children: ReactNode }) {
   const [state, setState] = useState<'loading' | 'ready' | 'absent' | 'error'>('loading');
@@ -32,11 +38,11 @@ export default function App() {
     <Route path="/" element={<Suspense fallback={<div className="app-column mx-auto p-4"><Skeleton /></div>}><DemoEntry /></Suspense>} />
     <Route path="/s/:token" element={<Placeholder title={screens.shared} nav={false} />} />
     <Route path="/emergency" element={<Placeholder title={screens.emergency} nav={false} />} />
-    <Route path="/home" element={<NeedsSession><Placeholder title={screens.home} /></NeedsSession>} />
-    <Route path="/timeline" element={<NeedsSession><Placeholder title={screens.timeline} /></NeedsSession>} />
-    <Route path="/add" element={<NeedsSession><Placeholder title={screens.add} /></NeedsSession>} />
-    <Route path="/records/:id" element={<NeedsSession><Placeholder title={screens.record} /></NeedsSession>} />
-    <Route path="/records/:id/edit" element={<NeedsSession><Placeholder title={screens.edit} /></NeedsSession>} />
+    <Route path="/home" element={<NeedsSession><Suspense fallback={loading}><Home /></Suspense></NeedsSession>} />
+    <Route path="/timeline" element={<NeedsSession><Suspense fallback={loading}><Timeline /></Suspense></NeedsSession>} />
+    <Route path="/add" element={<NeedsSession><Suspense fallback={loading}><AddRecord /></Suspense></NeedsSession>} />
+    <Route path="/records/:id" element={<NeedsSession><Suspense fallback={loading}><RecordDetail /></Suspense></NeedsSession>} />
+    <Route path="/records/:id/edit" element={<NeedsSession><Suspense fallback={loading}><EditRecord /></Suspense></NeedsSession>} />
     <Route path="/scan" element={<NeedsSession><Placeholder title={screens.scan} /></NeedsSession>} />
     <Route path="/scan/confirm" element={<NeedsSession><Placeholder title={screens.scanConfirm} /></NeedsSession>} />
     <Route path="/share" element={<NeedsSession><Placeholder title={screens.share} /></NeedsSession>} />
