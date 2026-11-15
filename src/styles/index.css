@@ -51,6 +51,14 @@ button { cursor: pointer; }
 button:disabled { cursor: default; }
 .app-column { max-width: 480px; }
 .app-column-wide { max-width: 1100px; }
+@page { size: A4; margin: 16mm; }
+@media print {
+  html, body, .clinician-page, .clinician-page > div { background: white !important; color: black !important; }
+  .clinician-page button, .clinician-page form { display: none !important; }
+  .clinician-page section, .clinician-page li { break-inside: avoid; page-break-inside: avoid; }
+  .clinician-page [class*="shadow-card"] { box-shadow: none !important; }
+  .clinician-page [class*="bg-surface"] { background: white !important; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

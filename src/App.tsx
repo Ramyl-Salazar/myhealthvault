@@ -17,6 +17,7 @@ const ScanConfirm = lazy(() => import('./screens/ScanConfirm').then(module => ({
 const ShareList = lazy(() => import('./screens/ShareList').then(module => ({ default: module.ShareList })));
 const ShareCreate = lazy(() => import('./screens/ShareCreate').then(module => ({ default: module.ShareCreate })));
 const ShareDetail = lazy(() => import('./screens/ShareDetail').then(module => ({ default: module.ShareDetail })));
+const ClinicianView = lazy(() => import('./screens/ClinicianView').then(module => ({ default: module.ClinicianView })));
 const loading = <div className="app-column mx-auto p-4"><Skeleton /></div>;
 
 function NeedsSession({ children }: { children: ReactNode }) {
@@ -41,7 +42,7 @@ function NeedsSession({ children }: { children: ReactNode }) {
 export default function App() {
   return <Routes>
     <Route path="/" element={<Suspense fallback={<div className="app-column mx-auto p-4"><Skeleton /></div>}><DemoEntry /></Suspense>} />
-    <Route path="/s/:token" element={<Placeholder title={screens.shared} nav={false} />} />
+    <Route path="/s/:token" element={<Suspense fallback={loading}><ClinicianView /></Suspense>} />
     <Route path="/emergency" element={<Placeholder title={screens.emergency} nav={false} />} />
     <Route path="/home" element={<NeedsSession><Suspense fallback={loading}><Home /></Suspense></NeedsSession>} />
     <Route path="/timeline" element={<NeedsSession><Suspense fallback={loading}><Timeline /></Suspense></NeedsSession>} />
