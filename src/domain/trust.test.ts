@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { trustAfterEdit, trustForNew } from './trust';
 import { makeRecord } from './testing';
+import type { RecordDetails } from './types';
 
 const verified = makeRecord({
   title: 'Hypertension',
@@ -43,9 +44,9 @@ describe('trustAfterEdit', () => {
       trustLevel: 'clinician_verified',
       details: { kind: 'medication', genericName: 'Metformin', dose: '500 mg', frequency: null, startOn: null, endOn: null },
     });
-    const reordered = {
+    const reordered: RecordDetails = {
       endOn: null, startOn: null, frequency: null, dose: '500 mg', genericName: 'Metformin', kind: 'medication',
-    } as const;
+    };
     expect(trustAfterEdit(med, { ...med, details: reordered })).toBe('clinician_verified');
   });
   it('treats undefined and null as the same for a field', () => {
@@ -60,7 +61,7 @@ describe('trustAfterEdit', () => {
   it('drops to patient_entered when one lab value changes', () => {
     const a = { name: 'HbA1c', value: '6.1', unit: '%', referenceRange: null };
     const lab = makeRecord({ type: 'lab_result', trustLevel: 'clinician_verified', details: { kind: 'lab_result', results: [a] } });
-    const changed = { kind: 'lab_result', results: [{ ...a, value: '6.2' }] } as const;
+    const changed: RecordDetails = { kind: 'lab_result', results: [{ ...a, value: '6.2' }] };
     expect(trustAfterEdit(lab, { ...lab, details: changed })).toBe('patient_entered');
   });
   it('drops to patient_entered when lab results are swapped in order', () => {
