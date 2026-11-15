@@ -22,6 +22,12 @@ it('refuses the sixth try during a 30 second wait', async () => {
   vi.useRealTimers();
 });
 
+it('counts two concurrent wrong guesses separately', async () => {
+  expect(await setPin('1234')).toBe(true);
+  expect(await Promise.all([verifyPin('0000'), verifyPin('1111')])).toEqual([false, false]);
+  expect(JSON.parse(localStorage.getItem('mhv.pin.v1') ?? '{}').failures).toBe(2);
+});
+
 it('does not set a PIN when storage fails', async () => {
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
   expect(await setPin('1234')).toBe(false);

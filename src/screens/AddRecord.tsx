@@ -25,9 +25,9 @@ export function AddRecord() {
 export function EditRecord() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const query = useQuery({ queryKey: ['record', id], queryFn: () => getRecord(id as string), enabled: Boolean(id) });
+  const query = useQuery({ queryKey: ['record', id], queryFn: () => getRecord(id as string), enabled: Boolean(id), refetchOnMount: 'always' });
   return <Screen title={screens.edit}>
-    {query.isPending ? <Skeleton /> : query.isError ? <ErrorState message={form.loadError} onRetry={() => void query.refetch()} /> : !query.data ? <EmptyState /> :
-      <RecordForm initial={query.data} onSaved={record => navigate(`/records/${record.id}`)} />}
+    {query.isError ? <ErrorState message={form.loadError} onRetry={() => void query.refetch()} /> : query.isPending || query.isFetching ? <Skeleton /> : !query.data ? <EmptyState /> :
+      <RecordForm key={query.data.updatedAt} initial={query.data} onSaved={record => navigate(`/records/${record.id}`)} />}
   </Screen>;
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { clinician, trust } from '../copy';
+import { sexLabel } from '../copy/sex';
 import { loadClinicianShare, verifyClinicianRecord, type ClinicianShare } from '../data/clinician';
 import { ageYears } from '../domain/age';
 import { formatDate } from '../domain/dates';
@@ -98,7 +99,7 @@ export function ClinicianView() {
     {state === 'loading' ? <Skeleton /> : state === 'ended' ? <EmptyState message={clinician.ended} /> : state === 'error' ? <ErrorState message={clinician.loadError} onRetry={() => { setState('loading'); setAttempt(value => value + 1); }} /> : data && <div className="mx-auto grid w-full max-w-3xl gap-5">
       <section className="grid gap-3 rounded-md bg-surface p-4 shadow-card">
         <div><h2 className="text-lg font-bold wrap-anywhere">{data.patient.displayName}</h2><p className="text-sm text-ink-muted">{clinician.chosen}</p></div>
-        <div className="flex flex-wrap gap-3 text-sm tabular-nums">{age !== null && <span>{clinician.years(age)}</span>}{data.patient.sex && <span className="capitalize">{data.patient.sex}</span>}{data.patient.bloodType && <span>{clinician.bloodType(data.patient.bloodType)}</span>}</div>
+        <div className="flex flex-wrap gap-3 text-sm tabular-nums">{age !== null && <span>{clinician.years(age)}</span>}{data.patient.sex && <span>{sexLabel(data.patient.sex)}</span>}{data.patient.bloodType && <span>{clinician.bloodType(data.patient.bloodType)}</span>}</div>
         <p className="text-sm text-ink-muted tabular-nums">{clinician.ends} {formatDate(data.expiresAt.slice(0, 10))} · {clinician.timeLeft(minutesLeft)}</p>
       </section>
       <section className="grid gap-2"><h2 className="text-lg font-bold">{clinician.key}</h2><div className="flex flex-wrap gap-2">{(['patient_entered', 'document_supported', 'clinician_verified'] as const).map(level => <span key={level} className="inline-flex items-center gap-2"><TrustBadge level={level} compact /><span className="text-xs">{trust[level]}</span></span>)}</div></section>

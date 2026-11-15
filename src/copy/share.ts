@@ -20,6 +20,8 @@ export const share = {
   ended: 'Ended',
   opened: (count: number) => `Opened ${count} ${count === 1 ? 'time' : 'times'}`,
   expires: 'This link ends',
+  dateSeparator: ', ',
+  utcSuffix: ' UTC',
   timeLeft: (minutes: number) => `${minutes} minutes left`,
   qrLabel: 'QR code for this share link',
   link: 'Share link',

@@ -1,15 +1,15 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { Settings } from './Settings';
 
-const mocks = vi.hoisted(() => ({ sex: 'female', resetDemo: vi.fn(async () => {}), deleteEverything: vi.fn(async () => {}), clearEmergencyCard: vi.fn(), updateProfile: vi.fn(async (patch: Record<string, unknown>) => ({ id: 'p', displayName: 'Demo patient', birthDate: '1968-03-12', sex: mocks.sex, bloodType: null, emergencyContacts: [], emergencyConsent: true, ...patch })) }));
+const mocks = vi.hoisted(() => ({ sex: 'female', getProfile: vi.fn(async () => ({ id: 'p', displayName: 'Demo patient', birthDate: '1968-03-12', sex: mocks.sex, bloodType: null, emergencyContacts: [], emergencyConsent: true })), resetDemo: vi.fn(async () => {}), deleteEverything: vi.fn(async () => {}), clearEmergencyCard: vi.fn(), updateProfile: vi.fn(async (patch: Record<string, unknown>) => ({ id: 'p', displayName: 'Demo patient', birthDate: '1968-03-12', sex: mocks.sex, bloodType: null, emergencyContacts: [], emergencyConsent: true, ...patch })) }));
 const entryPage = 'Entry page';
 vi.mock('../data/session', () => ({ resetDemo: mocks.resetDemo }));
 vi.mock('../data/deleteData', () => ({ deleteEverything: mocks.deleteEverything }));
 vi.mock('../domain/emergency', () => ({ clearEmergencyCard: mocks.clearEmergencyCard }));
-vi.mock('../data/profile', () => ({ getProfile: vi.fn(async () => ({ id: 'p', displayName: 'Demo patient', birthDate: '1968-03-12', sex: mocks.sex, bloodType: null, emergencyContacts: [], emergencyConsent: true })), updateProfile: mocks.updateProfile }));
+vi.mock('../data/profile', () => ({ getProfile: mocks.getProfile, updateProfile: mocks.updateProfile }));
 vi.mock('../screens/PinLock', () => ({ PinSetup: () => null }));
 
 const renderSettings = () => render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><MemoryRouter initialEntries={['/settings']}><Routes><Route path="/settings" element={<Settings />} /><Route path="/" element={<p>{entryPage}</p>} /></Routes></MemoryRouter></QueryClientProvider>);
@@ -22,6 +22,26 @@ it('requires typing delete before deleting', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Delete everything' }));
   await waitFor(() => expect(mocks.deleteEverything).toHaveBeenCalledOnce());
   expect(await screen.findByText(entryPage)).not.toBeNull();
+});
+it('accepts delete in any capitals with surrounding spaces', async () => {
+  renderSettings();
+  fireEvent.change(await screen.findByLabelText('Type delete to confirm'), { target: { value: '  DeLeTe  ' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Delete everything' }));
+  await waitFor(() => expect(mocks.deleteEverything).toHaveBeenCalledOnce());
+});
+it('keeps unsaved profile edits during a profile refetch', async () => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  render(<QueryClientProvider client={client}><MemoryRouter><Settings /></MemoryRouter></QueryClientProvider>);
+  fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Unsaved name' } });
+  act(() => { client.setQueryData(['profile'], { id: 'p', displayName: 'Server name', birthDate: '1968-03-12', sex: 'female', bloodType: null, emergencyContacts: [], emergencyConsent: true }); });
+  expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe('Unsaved name');
+});
+it('keeps the emergency card when turning consent off fails', async () => {
+  mocks.updateProfile.mockRejectedValueOnce(new Error('offline'));
+  renderSettings();
+  fireEvent.click(await screen.findByRole('checkbox', { name: 'Save an emergency card on this device' }));
+  await screen.findByText('Could not complete this action. Try again.');
+  expect(mocks.clearEmergencyCard).not.toHaveBeenCalled();
 });
 it('resets demo and clears the card when consent is turned off', async () => {
   renderSettings();

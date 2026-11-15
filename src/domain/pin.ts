@@ -4,6 +4,7 @@ interface PinRecord { salt: number[]; hash: number[]; iterations: number; failur
 const key = 'mhv.pin.v1';
 const iterations = 120000;
 let memory: PinRecord | null = null;
+let verificationChain: Promise<unknown> = Promise.resolve();
 
 function read(): PinRecord | null {
   const raw = safeStorage.get(key);
@@ -33,7 +34,13 @@ export async function setPin(pin: string): Promise<boolean> {
 export function hasPin(): boolean { return read() !== null; }
 export function clearPin(): void { memory = null; safeStorage.remove(key); }
 export function pinWaitSeconds(): number { return Math.max(0, Math.ceil(((read()?.waitUntil ?? 0) - Date.now()) / 1000)); }
-export async function verifyPin(pin: string): Promise<boolean> {
+export function verifyPin(pin: string): Promise<boolean> {
+  const attempt = verificationChain.then(() => verifyPinOnce(pin));
+  verificationChain = attempt.catch(() => false);
+  return attempt;
+}
+
+async function verifyPinOnce(pin: string): Promise<boolean> {
   const record = read();
   if (!record || pinWaitSeconds() > 0) return false;
   try {

@@ -59,6 +59,16 @@ it('omits patient facts that were not shared', async () => {
   expect(screen.queryByText(/Blood type/)).toBeNull();
 });
 
+it('shows the Settings label for a known sex and preserves an unknown value', async () => {
+  api.loadClinicianShare.mockResolvedValueOnce({ ok: true, data: { patient: { displayName: 'Lourdes Villareal', birthDate: null, sex: 'another_description', bloodType: null }, records: [], expiresAt: '2099-01-01T00:00:00Z' } });
+  mount();
+  expect(await screen.findByText('Another description')).not.toBeNull();
+  cleanup();
+  api.loadClinicianShare.mockResolvedValueOnce({ ok: true, data: { patient: { displayName: 'Lourdes Villareal', birthDate: null, sex: 'custom value', bloodType: null }, records: [], expiresAt: '2099-01-01T00:00:00Z' } });
+  mount();
+  expect(await screen.findByText('custom value')).not.toBeNull();
+});
+
 it('removes all record text when verification gets a 410', async () => {
   api.verifyClinicianRecord.mockResolvedValue({ ok: false, reason: 'ended' });
   mount();

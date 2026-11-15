@@ -46,6 +46,20 @@ describe('RecordForm', () => {
     expect(createRecord).not.toHaveBeenCalled();
   });
 
+  it('blocks a lab row with only a unit until it is completed or removed', async () => {
+    mount();
+    await userEvent.click(screen.getByRole('button', { name: form.types.lab_result }));
+    await userEvent.type(screen.getByRole('textbox', { name: form.title }), 'Lab report');
+    await userEvent.click(screen.getByRole('button', { name: form.addResult }));
+    await userEvent.type(screen.getAllByRole('textbox', { name: form.resultUnit })[1], 'mg/dL');
+    await userEvent.click(screen.getByRole('button', { name: form.save }));
+    expect(await screen.findByText(form.resultIncomplete)).not.toBeNull();
+    expect(createRecord).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: form.removeResult }));
+    await userEvent.click(screen.getByRole('button', { name: form.save }));
+    expect(createRecord).toHaveBeenCalledOnce();
+  });
+
   it('retains values and the client ID on retry', async () => {
     createRecord.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({ id: 'r1', trustLevel: 'patient_entered' });
     mount();

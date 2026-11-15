@@ -1,10 +1,11 @@
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { common, home, reminders } from '../copy';
 import { makeMedication, makeRecord } from '../domain/testing';
+import { formatDate } from '../domain/dates';
 import { Home } from './Home';
 
 const { listRecords, getProfile, listDismissed, dismissReminder } = vi.hoisted(() => ({ listRecords: vi.fn(), getProfile: vi.fn(), listDismissed: vi.fn(), dismissReminder: vi.fn() }));
@@ -68,5 +69,21 @@ describe('Home', () => {
     mount();
     expect(await screen.findByText(/Possible duplicate:/)).not.toBeNull();
     expect(screen.getAllByText(common.caution)).toHaveLength(1);
+  });
+
+  it('uses the local date and updates at local midnight', () => {
+    vi.stubEnv('TZ', 'America/Los_Angeles');
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-15T07:30:00Z'));
+    const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+    client.setQueryData(['records'], []);
+    client.setQueryData(['profile'], { displayName: 'Lourdes Villanueva' });
+    client.setQueryData(['dismissed'], new Set());
+    render(<QueryClientProvider client={client}><MemoryRouter><Home /></MemoryRouter></QueryClientProvider>);
+    expect(screen.getByText(formatDate('2026-11-14'))).not.toBeNull();
+    act(() => { vi.advanceTimersByTime(31 * 60 * 1000); });
+    expect(screen.getByText(formatDate('2026-11-15'))).not.toBeNull();
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
   });
 });

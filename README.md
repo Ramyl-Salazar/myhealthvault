@@ -21,6 +21,8 @@ On Android, download the debug APK from GitHub Releases and install it. The buil
 
 Anonymous sign-in, record storage, local document reading, selected-record share links, access logs, and record verification use the app's real data flow. The sample patient, providers, and records are fictional. Clinician licence numbers are collected for the demo but are not checked against a register. The app does not give medical advice.
 
+The PIN is only a screen lock; demo records are kept unencrypted in the browser's storage on this device, so do not enter real medical information.
+
 ## Run locally
 
 Install Node.js 22, run `npm ci`, set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_PUBLIC_URL` for the demo project, then run `npm run dev`. Run `npm test`, `npm run check:slop`, and `npm run test:e2e` for the checks. End-to-end tests create demo users and rows in the configured Supabase project.
