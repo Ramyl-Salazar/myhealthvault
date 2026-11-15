@@ -5,6 +5,7 @@ import { pin } from '../copy/pin';
 import { emergency } from '../copy/emergency';
 import { loadEmergencyCard } from '../domain/emergency';
 import { hasPin, pinWaitSeconds, setPin, verifyPin } from '../domain/pin';
+import { Button } from '../ui/Button';
 
 export function PinGate({ children }: { children: ReactNode }) {
   const location = useLocation();
@@ -50,5 +51,5 @@ export function PinSetup({ onSaved }: { onSaved?: () => void }) {
     if (!await setPin(first)) { setMessage(pin.unavailable); return; }
     setFirst(''); setSecond(''); setMessage(pin.saved); onSaved?.();
   };
-  return <form onSubmit={event => { void submit(event); }} className="flex flex-col gap-3"><label>{pin.setup}<input type="password" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} value={first} onChange={event => setFirst(event.target.value)} className="mt-1 block min-h-11 w-full rounded-md border border-line bg-bg px-3 text-ink" /></label><label>{pin.confirm}<input type="password" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} value={second} onChange={event => setSecond(event.target.value)} className="mt-1 block min-h-11 w-full rounded-md border border-line bg-bg px-3 text-ink" /></label><button className="min-h-11 rounded-md bg-primary px-4 text-on-primary">{pin.save}</button>{message && <p role="status">{message}</p>}</form>;
+  return <form onSubmit={event => { void submit(event); }} className="flex flex-col gap-3"><label>{pin.setup}<input type="password" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} value={first} onChange={event => setFirst(event.target.value)} className="mt-1 block min-h-11 w-full rounded-md border border-line bg-bg px-3 text-ink" /></label><label>{pin.confirm}<input type="password" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} value={second} onChange={event => setSecond(event.target.value)} className="mt-1 block min-h-11 w-full rounded-md border border-line bg-bg px-3 text-ink" /></label><Button type="submit" className="w-full">{pin.save}</Button>{message && <p role="status">{message}</p>}</form>;
 }
