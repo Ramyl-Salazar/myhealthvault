@@ -10,8 +10,8 @@ if (!sdk || !existsSync(sdk)) {
 
 const java = spawnSync('java', ['-version'], { encoding: 'utf8' });
 const version = `${java.stdout ?? ''}\n${java.stderr ?? ''}`;
-if (java.error || java.status !== 0 || !/(?:version\s+["']?17(?:[.\s"']|$)|openjdk\s+17(?:[.\s]|$))/i.test(version)) {
-  console.error('Android build requires Java 17 on PATH.');
+if (java.error || java.status !== 0 || !/(?:version\s+["']?21(?:[.\s"']|$)|openjdk\s+21(?:[.\s]|$))/i.test(version)) {
+  console.error('Android build requires Java 21 on PATH.');
   process.exit(1);
 }
 
