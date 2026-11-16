@@ -2,7 +2,7 @@
 
 MyHealthVault is a demo app for keeping a patient health history, reviewing document scans, and sharing selected records with a clinician.
 
-Live link: added at release.
+Live link: https://myhealthvault-salazarramyl-5992s-projects.vercel.app
 
 ## Screenshots
 

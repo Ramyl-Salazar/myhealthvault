@@ -10,6 +10,11 @@ test('previously visited records and emergency card remain available offline', a
   await expect.poll(() => page.evaluate(() => localStorage.getItem('mhv-query-cache')?.includes('Metformin'))).toBe(true);
   await page.goto('/emergency');
   await expect(page.getByRole('heading', { name: /Emergency/ })).toBeVisible();
+  // A returning visitor has an active service worker with its cache filled: wait for that, then reload once.
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await expect.poll(() => page.evaluate(async () => Boolean(await caches.match('/index.html', { ignoreSearch: true })))).toBe(true);
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
   await context.setOffline(true);
   await page.goto('/timeline');
   await expect(page.getByText('Metformin', { exact: true }).first()).toBeVisible();
